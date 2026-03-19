@@ -1,0 +1,7 @@
+# Misc
+.DS_Store
+*.log
+
+# Backup files
+*.bak
+*~
