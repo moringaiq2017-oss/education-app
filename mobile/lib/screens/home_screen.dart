@@ -22,20 +22,32 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    // تأخير تحميل البيانات حتى يتم بناء الـ widget بالكامل
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
   }
 
   Future<void> _loadData() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final lessonsProvider = Provider.of<LessonsProvider>(context, listen: false);
-    final progressProvider = Provider.of<ProgressProvider>(context, listen: false);
+    if (!mounted) return;
+    
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final lessonsProvider = Provider.of<LessonsProvider>(context, listen: false);
+      final progressProvider = Provider.of<ProgressProvider>(context, listen: false);
 
-    final child = authProvider.currentChild;
-    if (child != null) {
-      await Future.wait([
-        lessonsProvider.fetchTracks(),
-        progressProvider.fetchAllProgress(child.id),
-      ]);
+      final child = authProvider.currentChild;
+      if (child != null) {
+        await Future.wait([
+          lessonsProvider.fetchTracks(),
+          progressProvider.fetchAllProgress(child.id),
+        ]);
+      }
+    } catch (e) {
+      if (mounted) {
+        // عرض رسالة الخطأ إذا كان الـ widget ما زال موجوداً
+        debugPrint('Error loading data: $e');
+      }
     }
   }
 

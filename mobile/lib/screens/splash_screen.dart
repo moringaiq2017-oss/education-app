@@ -174,21 +174,33 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    final success = await authProvider.register(
-      _nameController.text.trim(),
-      _selectedAge,
-    );
-
-    if (!mounted) return;
-
-    if (success) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+    try {
+      final success = await authProvider.register(
+        _nameController.text.trim(),
+        _selectedAge,
       );
-    } else {
+
+      if (!mounted) return;
+
+      if (success) {
+        // استخدام pushAndRemoveUntil للتأكد من إزالة جميع الشاشات السابقة
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (route) => false,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authProvider.error ?? 'حدث خطأ في التسجيل'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(authProvider.error ?? 'حدث خطأ في التسجيل'),
+          content: Text('حدث خطأ: ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
