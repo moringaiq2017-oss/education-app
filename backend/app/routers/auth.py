@@ -30,6 +30,7 @@ def register(child_data: ChildCreate, db: Session = Depends(get_db)):
         device_id=child_data.device_id,
         name=child_data.name,
         age=child_data.age,
+        grade=child_data.grade,
         avatar=child_data.avatar or "default"
     )
     db.add(child)

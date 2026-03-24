@@ -13,6 +13,7 @@ class Child(Base):
     device_id = Column(String(255), unique=True, nullable=False, index=True)
     name = Column(String(100), nullable=False)
     age = Column(Integer, nullable=True)
+    grade = Column(Integer, nullable=True, comment='المرحلة الدراسية (1-6)')
     avatar = Column(String(50), default='default')
     created_at = Column(TIMESTAMP, server_default=func.now())
     last_active_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
