@@ -89,7 +89,8 @@ class ApiService {
   Future<Child> getChildProfile(String childId) async {
     try {
       final response = await _dio.get('/children/$childId');
-      return Child.fromJson(response.data['data']);
+      final data = response.data is Map && response.data.containsKey('data') ? response.data['data'] : response.data;
+      return Child.fromJson(data);
     } catch (e) {
       throw _handleError(e);
     }
@@ -100,7 +101,7 @@ class ApiService {
   Future<List<Track>> getTracks() async {
     try {
       final response = await _dio.get('/tracks');
-      final List data = response.data['data'] ?? [];
+      final List data = response.data is List ? response.data : (response.data['data'] ?? []);
       return data.map((json) => Track.fromJson(json)).toList();
     } catch (e) {
       throw _handleError(e);
@@ -110,7 +111,8 @@ class ApiService {
   Future<Track> getTrack(String trackId) async {
     try {
       final response = await _dio.get('/tracks/$trackId');
-      return Track.fromJson(response.data['data']);
+      final data = response.data is Map && response.data.containsKey('data') ? response.data['data'] : response.data;
+      return Track.fromJson(data);
     } catch (e) {
       throw _handleError(e);
     }
@@ -121,7 +123,7 @@ class ApiService {
   Future<List<Lesson>> getLessons(String trackId) async {
     try {
       final response = await _dio.get('/tracks/$trackId/lessons');
-      final List data = response.data['data'] ?? [];
+      final List data = response.data is List ? response.data : (response.data['data'] ?? []);
       return data.map((json) => Lesson.fromJson(json)).toList();
     } catch (e) {
       throw _handleError(e);
@@ -131,7 +133,8 @@ class ApiService {
   Future<Lesson> getLesson(String lessonId) async {
     try {
       final response = await _dio.get('/lessons/$lessonId');
-      return Lesson.fromJson(response.data['data']);
+      final data = response.data is Map && response.data.containsKey('data') ? response.data['data'] : response.data;
+      return Lesson.fromJson(data);
     } catch (e) {
       throw _handleError(e);
     }
@@ -142,7 +145,7 @@ class ApiService {
   Future<List<Progress>> getChildProgress(String childId) async {
     try {
       final response = await _dio.get('/children/$childId/progress');
-      final List data = response.data['data'] ?? [];
+      final List data = response.data is List ? response.data : (response.data['data'] ?? []);
       return data.map((json) => Progress.fromJson(json)).toList();
     } catch (e) {
       throw _handleError(e);
@@ -164,7 +167,8 @@ class ApiService {
         'time_spent_seconds': timeSpentSeconds,
         'score': score,
       });
-      return Progress.fromJson(response.data['data']);
+      final pData = response.data is Map && response.data.containsKey('data') ? response.data['data'] : response.data;
+      return Progress.fromJson(pData);
     } catch (e) {
       throw _handleError(e);
     }
@@ -175,7 +179,7 @@ class ApiService {
   Future<List<Achievement>> getAchievements(String childId) async {
     try {
       final response = await _dio.get('/children/$childId/achievements');
-      final List data = response.data['data'] ?? [];
+      final List data = response.data is List ? response.data : (response.data['data'] ?? []);
       return data.map((json) => Achievement.fromJson(json)).toList();
     } catch (e) {
       throw _handleError(e);
@@ -187,7 +191,7 @@ class ApiService {
   Future<Map<String, dynamic>> getStats(String childId) async {
     try {
       final response = await _dio.get('/children/$childId/stats');
-      return response.data['data'];
+      return response.data is Map && response.data.containsKey('data') ? response.data['data'] : response.data;
     } catch (e) {
       throw _handleError(e);
     }
