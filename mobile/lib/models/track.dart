@@ -22,11 +22,11 @@ class Track {
   factory Track.fromJson(Map<String, dynamic> json) {
     return Track(
       id: json['id'].toString(),
-      title: json['title'] ?? '',
+      title: json['name_ar'] ?? json['title'] ?? '',
       description: json['description'] ?? '',
       icon: json['icon'] ?? '📚',
-      color: json['color'] ?? '#4A90E2',
-      order: json['order'] ?? 0,
+      color: json['color'] ?? '#6C63FF',
+      order: json['display_order'] ?? json['order'] ?? 0,
       totalLessons: json['total_lessons'] ?? 0,
       completedLessons: json['completed_lessons'] ?? 0,
     );
