@@ -100,16 +100,65 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
 
 ## Testing
 
+### Automated Tests (pytest)
+
 ```bash
 # Run all tests
 pytest
 
+# Verbose mode
+pytest -v
+
 # With coverage
 pytest --cov=app --cov-report=html
 
-# Specific test
+# Specific test file
 pytest tests/test_auth.py
+
+# Specific test class
+pytest tests/test_auth.py::TestRegistration
+
+# Specific test function
+pytest tests/test_auth.py::TestRegistration::test_register_new_child_success
 ```
+
+### Test Files
+- **tests/conftest.py** — إعدادات وتجهيزات الاختبار (fixtures)
+- **tests/test_auth.py** — اختبارات المصادقة (التسجيل، تسجيل الدخول، الـ tokens)
+- **tests/test_lessons.py** — اختبارات المسارات والدروس
+- **tests/test_progress.py** — اختبارات التقدم والمحاولات
+
+### Manual API Testing
+
+للاختبار اليدوي السريع:
+
+```bash
+python test_api_manual.py
+```
+
+هذا السكريبت يختبر:
+- ✅ تسجيل طفل جديد
+- ✅ تسجيل الدخول
+- ✅ جلب المسارات
+- ✅ جلب دروس المسار
+- ✅ جلب تفاصيل درس
+- ✅ تسجيل محاولة
+- ✅ جلب التقدم
+- ✅ جلب الملخص
+
+### Test Coverage
+
+```bash
+# Generate HTML coverage report
+pytest --cov=app --cov-report=html
+
+# Open report
+open htmlcov/index.html  # macOS
+# or
+start htmlcov/index.html  # Windows
+```
+
+**الهدف:** Coverage > 80%
 
 ---
 
@@ -256,5 +305,52 @@ docker-compose up
 
 ---
 
-**Last Updated:** 19 March 2026  
-**Status:** 🚧 In Development
+## Recent Updates
+
+### 24 March 2026 ✅
+- ✅ **تم إضافة جميع الـ endpoints المطلوبة:**
+  - `GET /lessons/{id}` — تفاصيل الدرس (موجود بالفعل)
+  - `POST /lessons/{id}/attempt` — تسجيل محاولة (موجود بالفعل ومحسّن)
+  
+- ✅ **اختبارات شاملة:**
+  - `test_auth.py` — 13 اختبار للمصادقة
+  - `test_lessons.py` — 18 اختبار للمسارات والدروس
+  - `test_progress.py` — 25+ اختبار للتقدم والمحاولات
+  - `conftest.py` — تجهيزات شاملة (fixtures)
+  
+- ✅ **Error Handling:**
+  - جميع الـ endpoints تحتوي على معالجة أخطاء
+  - رسائل خطأ واضحة بالعربية
+  - HTTP status codes صحيحة
+  
+- ✅ **Validation:**
+  - Pydantic schemas محدثة
+  - التحقق من القيم (score: 0-5, age: 6-12, etc.)
+  - رسائل validation واضحة
+  
+- ✅ **Response Format:**
+  - تنسيق موحد لجميع الاستجابات
+  - استخدام Pydantic models
+  - from_attributes=True للتوافق مع SQLAlchemy
+  
+- ✅ **Security:**
+  - JWT authentication
+  - Premium access control
+  - Input sanitization
+  
+- ✅ **Documentation:**
+  - README.md محدّث
+  - test_api_manual.py للاختبار اليدوي
+  - تعليقات بالعربية في الكود
+
+### Next Steps
+- 🔄 تشغيل الاختبارات على بيئة حقيقية مع MySQL
+- 🔄 إضافة endpoints الإنجازات (achievements)
+- 🔄 إضافة pagination للقوائم الطويلة
+- 🔄 إضافة rate limiting
+- 🔄 إعداد Docker للنشر
+
+---
+
+**Last Updated:** 24 March 2026  
+**Status:** ✅ Backend API Complete — Ready for Testing

@@ -6,9 +6,7 @@ FastAPI Main Application
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-
-# Import routers (will be created by backend dev)
-# from app.routers import auth, lessons, progress, achievements
+from app.routers import auth, tracks, progress, achievements
 
 app = FastAPI(
     title="Education App Iraq API",
@@ -21,7 +19,7 @@ app = FastAPI(
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_origins=["*"],  # للتطوير فقط - حدده لاحقاً
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -43,10 +41,10 @@ def health_check():
     return {"status": "healthy"}
 
 # Include routers
-# app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
-# app.include_router(lessons.router, prefix="/api/v1", tags=["Lessons"])
-# app.include_router(progress.router, prefix="/api/v1", tags=["Progress"])
-# app.include_router(achievements.router, prefix="/api/v1", tags=["Achievements"])
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
+app.include_router(tracks.router, prefix="/api/v1", tags=["Tracks & Lessons"])
+app.include_router(progress.router, prefix="/api/v1", tags=["Progress"])
+app.include_router(achievements.router, prefix="/api/v1", tags=["Achievements"])
 
 # Startup event
 @app.on_event("startup")
@@ -54,6 +52,7 @@ async def startup_event():
     print("🚀 Backend API started")
     print(f"📚 Environment: {settings.ENVIRONMENT}")
     print(f"📊 Database: {settings.DATABASE_URL.split('@')[1] if '@' in settings.DATABASE_URL else 'configured'}")
+    print(f"📖 Docs: http://localhost:8000/docs")
 
 # Shutdown event
 @app.on_event("shutdown")

@@ -1,524 +1,218 @@
-# Mobile App — Flutter
-**تطبيق تعليم الأطفال العراقيين**
+# 🎓 تطبيق تعليم الأطفال - Education App
 
----
+تطبيق Flutter تعليمي تفاعلي مصمم خصيصاً للأطفال العراقيين (3-10 سنوات).
 
-## Setup
+## ✨ المميزات
 
-### Requirements
-- Flutter 3.19+
-- Dart 3.3+
+- ✅ **دعم RTL كامل** - واجهة عربية بالكامل
+- ✅ **Theme Cairo Font** - خط عربي جميل ومقروء
+- ✅ **API Integration** - متصل بالـ Backend بشكل كامل
+- ✅ **Local Storage (Hive)** - حفظ التقدم محلياً
+- ✅ **Offline Support** - إمكانية العمل بدون إنترنت
+- ✅ **Progress Tracking** - متابعة التقدم والإحصائيات
+- ✅ **Achievements System** - نظام إنجازات تحفيزي
+- ✅ **Responsive UI** - واجهة متجاوبة مع جميع الأحجام
+
+## 🏗️ البنية
+
+```
+lib/
+├── config/
+│   ├── constants.dart      # ثوابت التطبيق والـ API URLs
+│   ├── theme.dart          # الألوان والثيم
+│   └── routes.dart         # المسارات
+├── models/
+│   ├── child.dart          # موديل الطفل
+│   ├── track.dart          # موديل المسار
+│   ├── lesson.dart         # موديل الدرس
+│   ├── progress.dart       # موديل التقدم
+│   └── achievement.dart    # موديل الإنجازات
+├── services/
+│   ├── api_service.dart    # خدمة الـ API (Dio)
+│   ├── auth_service.dart   # خدمة المصادقة
+│   └── storage_service.dart # خدمة التخزين المحلي (Hive)
+├── providers/
+│   ├── auth_provider.dart     # Provider المصادقة
+│   ├── lessons_provider.dart  # Provider الدروس
+│   └── progress_provider.dart # Provider التقدم
+├── screens/
+│   ├── splash_screen.dart        # شاشة البداية والتسجيل
+│   ├── home_screen.dart          # الشاشة الرئيسية
+│   ├── lesson_list_screen.dart   # قائمة الدروس
+│   ├── lesson_detail_screen.dart # تفاصيل الدرس
+│   ├── progress_screen.dart      # شاشة التقدم والإحصائيات
+│   └── settings_screen.dart      # شاشة الإعدادات
+├── widgets/
+│   ├── track_card.dart        # بطاقة المسار
+│   ├── lesson_card.dart       # بطاقة الدرس
+│   ├── progress_bar.dart      # شريط التقدم
+│   └── achievement_badge.dart # شارة الإنجاز
+└── main.dart
+```
+
+## 🚀 التثبيت والتشغيل
+
+### المتطلبات
+- Flutter SDK 3.0+
 - Android Studio / VS Code
-- Android SDK (for Android)
-- Xcode (for iOS, macOS only)
+- Android SDK (للأندرويد) أو Xcode (للـ iOS)
 
-### Installation
+### خطوات التشغيل
 
+1. **تثبيت الـ dependencies:**
 ```bash
-# Check Flutter
-flutter doctor
-
-# Create project (if not exists)
 cd mobile
-flutter create --org com.makanstudios education_app_iraq
-
-# Get dependencies
 flutter pub get
 ```
 
----
+2. **تشغيل Backend:**
+تأكد من تشغيل الـ Backend أولاً على:
+```
+http://localhost:8000
+```
 
-## Run
+3. **تحديث API URL:**
+في ملف `lib/config/constants.dart`:
+```dart
+// للأندرويد Emulator:
+static const String apiBaseUrl = 'http://10.0.2.2:8000/api/v1';
 
-### Development
+// للجهاز الحقيقي:
+static const String apiBaseUrl = 'http://192.168.1.X:8000/api/v1';
+```
 
+4. **تشغيل التطبيق:**
 ```bash
-# Run on connected device/emulator
+# Android
 flutter run
 
-# Run with specific device
-flutter devices
-flutter run -d <device-id>
+# iOS
+flutter run -d ios
 
-# Hot reload: r
-# Hot restart: R
-# Quit: q
+# Chrome (للتطوير)
+flutter run -d chrome
 ```
 
-### Debug Mode
+## 📱 الشاشات
+
+### 1. Splash Screen
+- شاشة البداية مع أنيميشن
+- التحقق من وجود مستخدم مسجل
+- شاشة تسجيل جديد للمستخدمين الجدد
+
+### 2. Home Screen
+- عرض المسارات التعليمية
+- إحصائيات سريعة
+- التنقل بين الأقسام
+
+### 3. Lesson List Screen
+- قائمة الدروس داخل المسار
+- شريط تقدم المسار
+- نظام القفل للدروس
+
+### 4. Lesson Detail Screen
+- محتوى الدرس (نص/فيديو/اختبار)
+- أسئلة تفاعلية
+- زر إكمال الدرس
+- الانتقال للدرس التالي
+
+### 5. Progress Screen
+- إحصائيات التقدم
+- الإنجازات المفتوحة
+- الهدف اليومي
+
+### 6. Settings Screen
+- معلومات الحساب
+- إعدادات التطبيق
+- تسجيل الخروج
+
+## 🔌 API Integration
+
+التطبيق يتصل بالـ Backend عبر:
+
+### Endpoints المستخدمة:
+- `POST /api/v1/auth/register` - تسجيل طفل جديد
+- `POST /api/v1/auth/login` - تسجيل الدخول
+- `GET /api/v1/tracks` - جلب المسارات
+- `GET /api/v1/tracks/:id/lessons` - جلب دروس مسار
+- `GET /api/v1/lessons/:id` - جلب درس معين
+- `GET /api/v1/children/:id/progress` - جلب تقدم الطفل
+- `POST /api/v1/progress` - تحديث التقدم
+- `GET /api/v1/children/:id/achievements` - جلب الإنجازات
+- `GET /api/v1/children/:id/stats` - جلب الإحصائيات
+
+### Error Handling:
+- Timeout handling
+- Offline mode support
+- User-friendly error messages in Arabic
+
+## 💾 Local Storage
+
+استخدام Hive للتخزين المحلي:
+
+### ما يتم حفظه:
+- Device ID
+- Auth Token
+- بيانات الطفل
+- التقدم المحلي (للعمل Offline)
+- الإعدادات
+
+## 🎨 Theme & RTL
+
+- خط Cairo من Google Fonts
+- دعم RTL كامل
+- ألوان متناسقة وجذابة للأطفال
+- أنيميشنات سلسة
+
+## 🧪 الاختبار
+
+### للاختبار على Android Emulator:
 ```bash
-flutter run --debug
-```
-
-### Profile Mode (للـ performance testing)
-```bash
-flutter run --profile
-```
-
-### Release Mode
-```bash
-flutter run --release
-```
-
----
-
-## Build
-
-### Android APK
-```bash
-# Debug APK
-flutter build apk --debug
-
-# Release APK
-flutter build apk --release
-
-# Output: build/app/outputs/flutter-apk/app-release.apk
-```
-
-### Android App Bundle (للـ Google Play)
-```bash
-flutter build appbundle --release
-```
-
-### iOS (macOS only)
-```bash
-flutter build ios --release
-```
-
----
-
-## Project Structure
-
-```
-mobile/
-├── lib/
-│   ├── main.dart              # Entry point
-│   ├── app.dart               # App widget
-│   │
-│   ├── config/                # Configuration
-│   │   ├── theme.dart         # App theme (colors, fonts)
-│   │   ├── routes.dart        # Navigation routes
-│   │   └── constants.dart     # Constants
-│   │
-│   ├── models/                # Data models
-│   │   ├── child.dart
-│   │   ├── track.dart
-│   │   ├── lesson.dart
-│   │   ├── progress.dart
-│   │   └── achievement.dart
-│   │
-│   ├── services/              # Services (API, storage, audio)
-│   │   ├── api_service.dart
-│   │   ├── auth_service.dart
-│   │   ├── storage_service.dart
-│   │   └── audio_service.dart
-│   │
-│   ├── providers/             # State management (Provider/Riverpod/Bloc)
-│   │   ├── auth_provider.dart
-│   │   ├── lessons_provider.dart
-│   │   └── progress_provider.dart
-│   │
-│   ├── screens/               # App screens
-│   │   ├── splash_screen.dart
-│   │   ├── home_screen.dart
-│   │   ├── lesson_list_screen.dart
-│   │   ├── lesson_detail_screen.dart
-│   │   ├── progress_screen.dart
-│   │   └── settings_screen.dart
-│   │
-│   ├── widgets/               # Reusable widgets
-│   │   ├── track_card.dart
-│   │   ├── lesson_card.dart
-│   │   ├── progress_bar.dart
-│   │   └── achievement_badge.dart
-│   │
-│   └── utils/                 # Utilities
-│       ├── helpers.dart
-│       └── validators.dart
-│
-├── assets/                    # Static assets
-│   ├── images/
-│   │   ├── logo.png
-│   │   ├── characters/
-│   │   └── icons/
-│   ├── fonts/
-│   │   └── Cairo/
-│   └── audio/
-│       ├── lessons/
-│       └── effects/
-│
-├── test/                      # Tests
-│   └── widget_test.dart
-│
-├── android/                   # Android config
-├── ios/                       # iOS config
-├── pubspec.yaml              # Dependencies
-└── README.md
-```
-
----
-
-## Dependencies
-
-### Core (pubspec.yaml)
-
-```yaml
-dependencies:
-  flutter:
-    sdk: flutter
-  
-  # State Management
-  provider: ^6.1.1
-  # أو: flutter_riverpod: ^2.4.10
-  # أو: flutter_bloc: ^8.1.4
-  
-  # HTTP & API
-  dio: ^5.4.0
-  
-  # Local Storage
-  hive: ^2.2.3
-  hive_flutter: ^1.1.0
-  
-  # Audio
-  audioplayers: ^5.2.1
-  # أو: just_audio: ^0.9.36
-  
-  # Navigation
-  go_router: ^13.0.0
-  
-  # UI
-  google_fonts: ^6.1.0
-  
-  # Utils
-  intl: ^0.18.1
-  uuid: ^4.3.3
-  path_provider: ^2.1.2
-  
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^3.0.1
-```
-
-### Install
-```bash
-flutter pub get
-```
-
----
-
-## Configuration
-
-### 1. Theme (config/theme.dart)
-
-```dart
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-class AppTheme {
-  static ThemeData get lightTheme {
-    return ThemeData(
-      primaryColor: Color(0xFF4A90E2),
-      colorScheme: ColorScheme.light(
-        primary: Color(0xFF4A90E2),
-        secondary: Color(0xFF7ED321),
-        error: Color(0xFFF5A623),
-      ),
-      textTheme: GoogleFonts.cairoTextTheme(),
-      useMaterial3: true,
-    );
-  }
-}
-```
-
-### 2. RTL Support
-
-في `main.dart`:
-```dart
-return MaterialApp(
-  locale: Locale('ar'),
-  supportedLocales: [Locale('ar')],
-  localizationsDelegates: [
-    GlobalMaterialLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-  ],
-  // ...
-);
-```
-
-### 3. API Base URL
-
-في `services/api_service.dart`:
-```dart
-class ApiService {
-  static const String baseUrl = 'http://localhost:8000/api/v1';
-  // أو للـ Android emulator: 'http://10.0.2.2:8000/api/v1'
-}
-```
-
----
-
-## State Management
-
-### اختر واحد:
-
-#### Option 1: Provider (بسيط)
-```yaml
-dependencies:
-  provider: ^6.1.1
-```
-
-#### Option 2: Riverpod (حديث، قوي)
-```yaml
-dependencies:
-  flutter_riverpod: ^2.4.10
-```
-
-#### Option 3: Bloc (enterprise-level)
-```yaml
-dependencies:
-  flutter_bloc: ^8.1.4
-```
-
-**توصية:** ابدأ بـ **Provider** للبساطة، لو احتجت أقوى استخدم **Riverpod**.
-
----
-
-## Testing
-
-```bash
-# Run all tests
-flutter test
-
-# Run specific test
-flutter test test/widget_test.dart
-
-# With coverage
-flutter test --coverage
-
-# Integration tests (future)
-flutter drive --target=test_driver/app.dart
-```
-
----
-
-## Code Style
-
-### Follow Official Dart Style Guide
-- https://dart.dev/guides/language/effective-dart
-
-### Use Lints
-```yaml
-dev_dependencies:
-  flutter_lints: ^3.0.1
-```
-
-### Format Code
-```bash
-dart format lib/
-```
-
-### Analyze
-```bash
-flutter analyze
-```
-
----
-
-## Common Commands
-
-```bash
-# Clean build
-flutter clean
-
-# Get dependencies
-flutter pub get
-
-# Upgrade dependencies
-flutter pub upgrade
-
-# Run build_runner (if using code generation)
-flutter pub run build_runner build --delete-conflicting-outputs
-
-# Check outdated packages
-flutter pub outdated
-```
-
----
-
-## Debugging
-
-### Flutter DevTools
-```bash
-# Run app
+flutter emulators --launch <emulator_id>
 flutter run
-
-# Open DevTools (في browser)
-# اتبع الرابط في console
 ```
 
-### Logs
+### للاختبار على جهاز حقيقي:
+1. تفعيل USB Debugging
+2. توصيل الجهاز
+3. `flutter devices`
+4. `flutter run`
+
+## 🐛 Troubleshooting
+
+### مشكلة الاتصال بالـ API:
+- تأكد من تشغيل Backend
+- للـ Emulator استخدم `10.0.2.2` بدلاً من `localhost`
+- للجهاز الحقيقي، تأكد أن الجهاز والكمبيوتر على نفس الشبكة
+
+### مشكلة Hive:
 ```bash
-# View logs
-flutter logs
-
-# Filter logs
-flutter logs | grep "MyTag"
-```
-
----
-
-## Performance
-
-### Profile Mode
-```bash
-flutter run --profile
-```
-
-### Performance Overlay
-```dart
-MaterialApp(
-  showPerformanceOverlay: true,
-  // ...
-)
-```
-
-### Check for Jank (dropped frames)
-- Use DevTools → Performance tab
-- Target: 60 FPS
-
----
-
-## Assets Management
-
-### pubspec.yaml
-```yaml
-flutter:
-  assets:
-    - assets/images/
-    - assets/images/characters/
-    - assets/audio/
-  fonts:
-    - family: Cairo
-      fonts:
-        - asset: assets/fonts/Cairo/Cairo-Regular.ttf
-        - asset: assets/fonts/Cairo/Cairo-Bold.ttf
-          weight: 700
-```
-
-### Usage
-```dart
-// Image
-Image.asset('assets/images/logo.png')
-
-// Audio
-AudioPlayer().play(AssetSource('audio/success.mp3'))
-
-// Font (auto with google_fonts)
-Text('مرحباً', style: GoogleFonts.cairo())
-```
-
----
-
-## Android Setup
-
-### Minimum SDK
-
-`android/app/build.gradle`:
-```gradle
-android {
-    defaultConfig {
-        minSdkVersion 24  // Android 7.0+
-        targetSdkVersion 34
-    }
-}
-```
-
-### App Name
-
-`android/app/src/main/AndroidManifest.xml`:
-```xml
-<application
-    android:label="تعليم الأطفال"
-    android:icon="@mipmap/ic_launcher">
-```
-
-### Permissions
-
-```xml
-<!-- Internet (already included by default) -->
-<uses-permission android:name="android.permission.INTERNET"/>
-
-<!-- Audio (if needed) -->
-<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-```
-
----
-
-## iOS Setup (Future)
-
-### Minimum Version
-
-`ios/Podfile`:
-```ruby
-platform :ios, '12.0'
-```
-
-### App Name
-
-`ios/Runner/Info.plist`:
-```xml
-<key>CFBundleDisplayName</key>
-<string>تعليم الأطفال</string>
-```
-
----
-
-## Contributing
-
-1. Create feature branch: `git checkout -b feature/frontend-xxx`
-2. Make changes
-3. Test: `flutter test`
-4. Format: `dart format lib/`
-5. Commit: `git commit -m "[frontend] Description"`
-6. Push: `git push origin feature/frontend-xxx`
-7. Open Pull Request to `develop`
-
----
-
-## Troubleshooting
-
-### Problem: "Gradle build failed"
-```bash
-cd android
-./gradlew clean
-cd ..
 flutter clean
 flutter pub get
-flutter run
 ```
 
-### Problem: "Unable to load asset"
-- تأكد من إضافة الملف في `pubspec.yaml`
-- `flutter clean && flutter pub get`
+### مشكلة الخطوط:
+تأكد من اتصالك بالإنترنت لتحميل Google Fonts، أو قم بإضافة الخطوط محلياً.
 
-### Problem: "RTL not working"
-- تأكد من `locale: Locale('ar')`
-- تأكد من `localizationsDelegates`
-- Restart app (hot reload لا يكفي)
+## 📝 TODO
+
+- [ ] إضافة video player للفيديوهات
+- [ ] إضافة صفحة الإشعارات
+- [ ] إضافة نظام المكافآت
+- [ ] إضافة مشاركة التقدم
+- [ ] إضافة Dark Mode
+- [ ] تحسين الأنيميشنات
+- [ ] إضافة Unit Tests
+
+## 👨‍💻 المطور
+
+Frontend Developer - Flutter
+تطبيق تعليمي للأطفال العراقيين - 2026
+
+## 📄 License
+
+هذا المشروع تعليمي مفتوح المصدر.
 
 ---
 
-## Resources
-
-- Flutter Docs: https://docs.flutter.dev/
-- Dart Docs: https://dart.dev/guides
-- Pub.dev: https://pub.dev/
-- Flutter Cookbook: https://docs.flutter.dev/cookbook
-
----
-
-**Last Updated:** 19 March 2026  
-**Status:** 🚧 In Development  
-**Framework:** Flutter 3.19+
+**ملاحظة:** تأكد من تشغيل Backend قبل تشغيل التطبيق!
