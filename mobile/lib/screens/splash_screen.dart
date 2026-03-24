@@ -69,13 +69,15 @@ class _SplashScreenState extends State<SplashScreen>
     // الانتقال للشاشة المناسبة
     if (authProvider.isLoggedIn) {
       // المستخدم مسجل - اذهب للشاشة الرئيسية
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const HomeScreen()),
+        (route) => false,
       );
     } else {
       // المستخدم غير مسجل - اذهب لشاشة التسجيل
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+        (route) => false,
       );
     }
   }
@@ -161,7 +163,7 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  int _selectedAge = 5;
+  int _selectedAge = 6;
 
   @override
   void dispose() {

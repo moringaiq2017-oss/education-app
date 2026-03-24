@@ -38,11 +38,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final child = authProvider.currentChild;
       if (child != null && child.id.isNotEmpty) {
-        final childId = int.tryParse(child.id) ?? 0;
-        if (childId > 0) {
+        final childIdNum = int.tryParse(child.id) ?? 0;
+        if (childIdNum > 0) {
           await Future.wait([
             lessonsProvider.fetchTracks(),
-            progressProvider.fetchAllProgress(childId),
+            progressProvider.fetchAllProgress(child.id),
           ]).timeout(
             const Duration(seconds: 10),
             onTimeout: () {
@@ -264,9 +264,9 @@ class HomeTab extends StatelessWidget {
                                   onRefresh: () async {
                                     await lessonsProvider.fetchTracks();
                                     if (child != null && child.id.isNotEmpty) {
-                                      final childId = int.tryParse(child.id) ?? 0;
-                                      if (childId > 0) {
-                                        await progressProvider.fetchAllProgress(childId);
+                                      final childIdNum = int.tryParse(child.id) ?? 0;
+                                      if (childIdNum > 0) {
+                                        await progressProvider.fetchAllProgress(child.id);
                                       }
                                     }
                                   },
