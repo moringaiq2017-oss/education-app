@@ -172,29 +172,37 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
     try {
-      print('🔵 Starting registration...');
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      
+      // الانتظار حتى يكون AuthProvider مهيأ
+      if (!authProvider.isInitialized) {
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+
       final success = await authProvider.register(
         _nameController.text.trim(),
         _selectedAge,
       );
 
-      print('🔵 Registration result: $success');
-      print('🔵 Current child: ${authProvider.currentChild?.name}');
-
       if (!mounted) return;
 
       if (success && authProvider.currentChild != null) {
-        print('✅ Registration successful, navigating to home...');
-        // استخدام pushAndRemoveUntil للتأكد من إزالة جميع الشاشات السابقة
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        // الانتقال للشاشة الرئيسية بعد تأخير قصير للسماح بتحديث البيانات
+        await Future.delayed(const Duration(milliseconds: 300));
+        
+        if (!mounted) return;
+
+        // استخدام Navigator.pushAndRemoveUntil لحذف كل الشاشات السابقة
+        await Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          ),
           (route) => false,
         );
       } else {
-        print('❌ Registration failed');
+        if (!mounted) return;
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(authProvider.error ?? 'حدث خطأ في التسجيل'),
@@ -202,10 +210,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           ),
         );
       }
-    } catch (e, stackTrace) {
-      print('❌ Registration exception: $e');
-      print('Stack trace: $stackTrace');
+    } catch (e) {
       if (!mounted) return;
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('حدث خطأ: ${e.toString()}'),

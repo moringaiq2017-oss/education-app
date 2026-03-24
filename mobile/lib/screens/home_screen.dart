@@ -37,16 +37,28 @@ class _HomeScreenState extends State<HomeScreen> {
       final progressProvider = Provider.of<ProgressProvider>(context, listen: false);
 
       final child = authProvider.currentChild;
-      if (child != null) {
-        await Future.wait([
-          lessonsProvider.fetchTracks(),
-          progressProvider.fetchAllProgress(child.id),
-        ]);
+      if (child != null && child.id.isNotEmpty) {
+        final childId = int.tryParse(child.id) ?? 0;
+        if (childId > 0) {
+          await Future.wait([
+            lessonsProvider.fetchTracks(),
+            progressProvider.fetchAllProgress(childId),
+          ]).timeout(
+            const Duration(seconds: 10),
+            onTimeout: () {
+              debugPrint('⚠️ Data loading timed out');
+              return [];
+            },
+          );
+        } else {
+          debugPrint('⚠️ Invalid child ID, skipping data load');
+        }
+      } else {
+        debugPrint('⚠️ No valid child found, skipping data load');
       }
     } catch (e) {
       if (mounted) {
-        // عرض رسالة الخطأ إذا كان الـ widget ما زال موجوداً
-        debugPrint('Error loading data: $e');
+        debugPrint('❌ Error loading data: $e');
       }
     }
   }
@@ -251,8 +263,11 @@ class HomeTab extends StatelessWidget {
                               : RefreshIndicator(
                                   onRefresh: () async {
                                     await lessonsProvider.fetchTracks();
-                                    if (child != null) {
-                                      await progressProvider.fetchAllProgress(child.id);
+                                    if (child != null && child.id.isNotEmpty) {
+                                      final childId = int.tryParse(child.id) ?? 0;
+                                      if (childId > 0) {
+                                        await progressProvider.fetchAllProgress(childId);
+                                      }
                                     }
                                   },
                                   child: ListView.builder(
