@@ -50,13 +50,13 @@ class AuthProvider with ChangeNotifier {
   }
 
   // تسجيل طفل جديد
-  Future<bool> register(String name, int age) async {
+  Future<bool> register(String name, int age, {int? grade}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      _currentChild = await _authService.register(name: name, age: age);
+      _currentChild = await _authService.register(name: name, age: age, grade: grade);
       _isLoading = false;
       notifyListeners();
       return true;

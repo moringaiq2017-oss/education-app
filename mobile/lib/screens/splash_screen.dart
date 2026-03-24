@@ -302,6 +302,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       final success = await authProvider.register(
         _nameController.text.trim(),
         _gradeToAge(_selectedGrade),
+        grade: _selectedGrade,
       );
 
       if (!mounted) return;

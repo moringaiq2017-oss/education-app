@@ -60,12 +60,14 @@ class ApiService {
     required String name,
     required int age,
     required String deviceId,
+    int? grade,
   }) async {
     try {
       final response = await _dio.post('/auth/register', data: {
         'name': name,
         'age': age,
         'device_id': deviceId,
+        if (grade != null) 'grade': grade,
       });
       return response.data;
     } catch (e) {

@@ -53,6 +53,7 @@ class AuthService {
   Future<Child> register({
     required String name,
     required int age,
+    int? grade,
   }) async {
     try {
       final deviceId = await getDeviceId();
@@ -61,6 +62,7 @@ class AuthService {
         name: name,
         age: age,
         deviceId: deviceId,
+        grade: grade,
       );
 
       // حفظ بيانات الطفل والتوكن
