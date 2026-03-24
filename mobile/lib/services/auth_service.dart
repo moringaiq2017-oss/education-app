@@ -64,8 +64,9 @@ class AuthService {
       );
 
       // حفظ بيانات الطفل والتوكن
-      final child = Child.fromJson(response['data']['child']);
-      final token = response['data']['token'];
+      // Backend response format: { "access_token": "...", "token_type": "bearer", "child": {...} }
+      final child = Child.fromJson(response['child']);
+      final token = response['access_token'] as String;
 
       await _storageService.saveChild(child);
       await _storageService.saveAuthToken(token);
@@ -73,6 +74,7 @@ class AuthService {
 
       return child;
     } catch (e) {
+      print('❌ Register error: $e');
       rethrow;
     }
   }
@@ -85,8 +87,9 @@ class AuthService {
       final response = await _apiService.login(deviceId);
 
       // حفظ بيانات الطفل والتوكن
-      final child = Child.fromJson(response['data']['child']);
-      final token = response['data']['token'];
+      // Backend response format: { "access_token": "...", "token_type": "bearer", "child": {...} }
+      final child = Child.fromJson(response['child']);
+      final token = response['access_token'] as String;
 
       await _storageService.saveChild(child);
       await _storageService.saveAuthToken(token);
@@ -94,6 +97,7 @@ class AuthService {
 
       return child;
     } catch (e) {
+      print('❌ Login error: $e');
       rethrow;
     }
   }

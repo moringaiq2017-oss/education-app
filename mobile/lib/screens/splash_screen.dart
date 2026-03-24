@@ -175,20 +175,26 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     try {
+      print('🔵 Starting registration...');
       final success = await authProvider.register(
         _nameController.text.trim(),
         _selectedAge,
       );
 
+      print('🔵 Registration result: $success');
+      print('🔵 Current child: ${authProvider.currentChild?.name}');
+
       if (!mounted) return;
 
-      if (success) {
+      if (success && authProvider.currentChild != null) {
+        print('✅ Registration successful, navigating to home...');
         // استخدام pushAndRemoveUntil للتأكد من إزالة جميع الشاشات السابقة
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const HomeScreen()),
           (route) => false,
         );
       } else {
+        print('❌ Registration failed');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(authProvider.error ?? 'حدث خطأ في التسجيل'),
@@ -196,12 +202,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           ),
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('❌ Registration exception: $e');
+      print('Stack trace: $stackTrace');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('حدث خطأ: ${e.toString()}'),
           backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
         ),
       );
     }

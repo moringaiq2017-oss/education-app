@@ -3,6 +3,8 @@ class Child {
   final String name;
   final int age;
   final String deviceId;
+  final String avatar;
+  final bool isPremium;
   final DateTime createdAt;
 
   Child({
@@ -10,6 +12,8 @@ class Child {
     required this.name,
     required this.age,
     required this.deviceId,
+    this.avatar = 'default',
+    this.isPremium = false,
     required this.createdAt,
   });
 
@@ -19,6 +23,8 @@ class Child {
       name: json['name'] ?? '',
       age: json['age'] ?? 0,
       deviceId: json['device_id'] ?? '',
+      avatar: json['avatar'] ?? 'default',
+      isPremium: json['is_premium'] ?? false,
       createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String()),
     );
   }
@@ -29,6 +35,8 @@ class Child {
       'name': name,
       'age': age,
       'device_id': deviceId,
+      'avatar': avatar,
+      'is_premium': isPremium,
       'created_at': createdAt.toIso8601String(),
     };
   }
@@ -38,6 +46,8 @@ class Child {
     String? name,
     int? age,
     String? deviceId,
+    String? avatar,
+    bool? isPremium,
     DateTime? createdAt,
   }) {
     return Child(
@@ -45,6 +55,8 @@ class Child {
       name: name ?? this.name,
       age: age ?? this.age,
       deviceId: deviceId ?? this.deviceId,
+      avatar: avatar ?? this.avatar,
+      isPremium: isPremium ?? this.isPremium,
       createdAt: createdAt ?? this.createdAt,
     );
   }
