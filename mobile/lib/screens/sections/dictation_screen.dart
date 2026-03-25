@@ -355,18 +355,19 @@ class _DictationPracticeScreenState extends State<DictationPracticeScreen> {
                     ),
                   const SizedBox(height: 16),
                   // أزرار السماع وإظهار الكلمة
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 10,
+                    runSpacing: 8,
                     children: [
                       _ActionButton(
                         icon: Icons.volume_up_rounded,
-                        label: 'اسمع الكلمة',
+                        label: 'اسمع',
                         onTap: () => _tts.speak(_currentWord),
                       ),
-                      const SizedBox(width: 12),
                       _ActionButton(
                         icon: Icons.visibility_rounded,
-                        label: 'أظهر الكلمة',
+                        label: 'أظهر',
                         onTap: _showCurrentWord,
                       ),
                     ],
