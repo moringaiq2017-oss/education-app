@@ -1,30 +1,30 @@
 /// بيانات الأناشيد المستخرجة من كتاب "قراءتي للصف الأول الابتدائي"
 /// وزارة التربية العراقية - الطبعة السادسة عشرة 2023
 
-class WordTiming {
-  final String word;
-  final double startTime; // بالثواني
+/// قسم من الأغنية (مقدمة، كورس، مقطع، خاتمة)
+class SongSection {
+  final String label; // مثل: Intro, Chorus, Verse 1, Outro
+  final String labelAr; // مثل: مقدمة, كورس, المقطع الأول, خاتمة
+  final List<String> lines;
+  final double startTime; // بداية القسم بالثواني
   final double endTime;
+  final int repeatCount; // عدد التكرار (للكورس)
 
-  const WordTiming({
-    required this.word,
+  const SongSection({
+    required this.label,
+    required this.labelAr,
+    required this.lines,
     required this.startTime,
     required this.endTime,
+    this.repeatCount = 1,
   });
-}
-
-class SongLine {
-  final String text;
-  final List<WordTiming> words;
-
-  const SongLine({required this.text, required this.words});
 }
 
 class Song {
   final int id;
   final String title;
-  final String text; // النص الكامل
-  final List<SongLine> lines; // الأسطر مع توقيت الكلمات
+  final String text; // النص الكامل (للعرض البسيط)
+  final List<SongSection> sections; // أقسام الأغنية مع التوقيت
   final int pageNumber;
   final String audioFile;
   final bool hasAudio;
@@ -33,7 +33,7 @@ class Song {
     required this.id,
     required this.title,
     required this.text,
-    this.lines = const [],
+    this.sections = const [],
     required this.pageNumber,
     required this.audioFile,
     required this.hasAudio,
@@ -46,13 +46,78 @@ class SongsData {
       id: 1,
       title: 'دُعَاء',
       text: 'أَدْعُوكَ يَا إِلَهِي\n'
-          'يَسِّرْ عَلَيَّ دَرْسِي\n'
-          'وَاحْفَظْ أَبِي وَأُمِّي\n'
-          'يَا وَاسِعَ الْعَطَاءِ\n'
           'يَا رَافِعَ السَّمَاءِ\n'
+          'يَسِّرْ عَلَيَّ دَرْسِي\n'
           'بِالْجِدِّ وَالذَّكَاءِ\n'
+          'اِحْفَظْ أَبِي وَأُمِّي\n'
           'وَكُلَّ أَصْدِقَائِي\n'
+          'يَا وَاسِعَ الْعَطَاءِ\n'
           'رَبِّ اسْتَجِبْ دُعَائِي',
+      sections: [
+        // المقدمة - بطيئة حرف حرف
+        SongSection(
+          label: 'Intro',
+          labelAr: 'مقدمة',
+          lines: [
+            'أَدْ-عُو-كَ يَا إِلَا-هِي',
+            'يَا رَا-فِعَ السَّ-مَا-ءِ',
+          ],
+          startTime: 0.0,
+          endTime: 7.0,
+        ),
+        // الكورس - يتكرر 3 مرات
+        SongSection(
+          label: 'Chorus',
+          labelAr: 'كورس',
+          lines: [
+            'أَدْعُوكَ يَا إِلَهِي',
+            'يَا رَافِعَ السَّمَاءِ',
+            'يَسِّرْ عَلَيَّ دَرْسِي',
+            'بِالْجِدِّ وَالذَّكَاءِ',
+          ],
+          startTime: 7.0,
+          endTime: 22.0,
+          repeatCount: 3,
+        ),
+        // المقطع الأول
+        SongSection(
+          label: 'Verse 1',
+          labelAr: 'المقطع الأول',
+          lines: [
+            'اِحْفَظْ أَبِي وَأُمِّي',
+            'وَكُلَّ أَصْدِقَائِي',
+            'يَا وَاسِعَ الْعَطَاءِ',
+            'رَبِّ اسْتَجِبْ دُعَائِي',
+          ],
+          startTime: 22.0,
+          endTime: 30.0,
+        ),
+        // الكورس مرة ثانية
+        SongSection(
+          label: 'Chorus',
+          labelAr: 'كورس',
+          lines: [
+            'أَدْعُوكَ يَا إِلَهِي',
+            'يَا رَافِعَ السَّمَاءِ',
+            'يَسِّرْ عَلَيَّ دَرْسِي',
+            'بِالْجِدِّ وَالذَّكَاءِ',
+          ],
+          startTime: 30.0,
+          endTime: 40.0,
+          repeatCount: 3,
+        ),
+        // الخاتمة
+        SongSection(
+          label: 'Outro',
+          labelAr: 'خاتمة',
+          lines: [
+            'يَا وَاسِعَ الْعَطَاءِ',
+            'رَبِّ اسْتَجِبْ دُعَائِي',
+          ],
+          startTime: 40.0,
+          endTime: 44.0,
+        ),
+      ],
       pageNumber: 30,
       audioFile: 'assets/audio/song_01_duaa.mp3',
       hasAudio: true,
