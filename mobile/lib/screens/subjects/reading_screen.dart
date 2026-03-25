@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../config/theme.dart';
+import '../../widgets/fun_widgets.dart';
 import '../sections/dictation_screen.dart';
 import '../sections/memorization_screen.dart';
 import '../sections/songs_screen.dart';
@@ -13,41 +14,41 @@ class ReadingScreen extends StatelessWidget {
     return _SubjectLayout(
       title: 'القراءة',
       color: AppTheme.dictationColor,
-      icon: Icons.menu_book_rounded,
-      subtitle: 'كتاب قراءتي - الصف الأول',
+      emoji: '📖',
+      subtitle: 'هيا نقرأ سوا يا بطل!',
       sections: [
         _SectionTile(
-          icon: Icons.edit_note_rounded,
+          emoji: '✏️',
           title: 'الإملاء',
-          subtitle: 'التطبيق يردد والطالب يكتب',
+          subtitle: 'اسمع واكتب يا شاطر!',
           color: AppTheme.dictationColor,
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DictationScreen())),
         ),
         _SectionTile(
-          icon: Icons.music_note_rounded,
+          emoji: '🎵',
           title: 'الأناشيد',
-          subtitle: 'أناشيد القراءة بصوت ممتع',
+          subtitle: 'غنّي وتعلّم معنا!',
           color: AppTheme.songsColor,
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SongsScreen())),
         ),
         _SectionTile(
-          icon: Icons.bookmark_rounded,
+          emoji: '📝',
           title: 'المحفوظات',
-          subtitle: 'حفظ النصوص بـ 3 مراحل تفاعلية',
+          subtitle: 'احفظ وردّد يا نجم!',
           color: const Color(0xFF00B894),
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MemorizationScreen())),
         ),
         _SectionTile(
-          icon: Icons.abc_rounded,
+          emoji: '🔤',
           title: 'الحروف',
-          subtitle: 'تعلم كتابة الحروف',
+          subtitle: 'تعال نتعلم الحروف!',
           color: const Color(0xFFFDAA5E),
           onTap: () {},
         ),
         _SectionTile(
-          icon: Icons.play_circle_rounded,
+          emoji: '💻',
           title: 'التعليم الإلكتروني',
-          subtitle: 'دروس فيديو',
+          subtitle: 'شاهد دروس فيديو ممتعة!',
           color: const Color(0xFF0984E3),
           isElearning: true,
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ElearningScreen(subject: 'القراءة'))),
@@ -58,19 +59,19 @@ class ReadingScreen extends StatelessWidget {
 }
 
 // ============================================
-// Layout مشترك لكل المواد الدراسية
+// Layout مشترك لكل المواد الدراسية - ستايل أطفال
 // ============================================
 class _SubjectLayout extends StatelessWidget {
   final String title;
   final Color color;
-  final IconData icon;
+  final String emoji;
   final String subtitle;
   final List<_SectionTile> sections;
 
   const _SubjectLayout({
     required this.title,
     required this.color,
-    required this.icon,
+    required this.emoji,
     required this.subtitle,
     required this.sections,
   });
@@ -86,46 +87,49 @@ class _SubjectLayout extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          // هيدر
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 28),
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(32),
-                bottomRight: Radius.circular(32),
+      body: AnimatedBubbleBackground(
+        color: color,
+        child: Column(
+          children: [
+            // هيدر
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 28),
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(32),
+                  bottomRight: Radius.circular(32),
+                ),
+              ),
+              child: Column(
+                children: [
+                  AnimatedEmoji(emoji: emoji, size: 52),
+                  const SizedBox(height: 10),
+                  Text(
+                    subtitle,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white.withValues(alpha: 0.95)),
+                  ),
+                ],
               ),
             ),
-            child: Column(
-              children: [
-                Icon(icon, size: 52, color: Colors.white),
-                const SizedBox(height: 10),
-                Text(
-                  subtitle,
-                  style: TextStyle(fontSize: 14, color: Colors.white.withValues(alpha: 0.85)),
-                ),
-              ],
+            // الأقسام
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(20),
+                itemCount: sections.length,
+                itemBuilder: (context, index) => sections[index],
+              ),
             ),
-          ),
-          // الأقسام
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(20),
-              itemCount: sections.length,
-              itemBuilder: (context, index) => sections[index],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
 class _SectionTile extends StatelessWidget {
-  final IconData icon;
+  final String emoji;
   final String title;
   final String subtitle;
   final Color color;
@@ -133,7 +137,7 @@ class _SectionTile extends StatelessWidget {
   final bool isElearning;
 
   const _SectionTile({
-    required this.icon,
+    required this.emoji,
     required this.title,
     required this.subtitle,
     required this.color,
@@ -143,43 +147,63 @@ class _SectionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: isElearning ? Border.all(color: color.withValues(alpha: 0.3), width: 1.5) : null,
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 3)),
-        ],
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        leading: Container(
-          width: 52, height: 52,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [color, color.withValues(alpha: 0.8)]),
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 3))],
-          ),
-          child: Icon(icon, color: Colors.white, size: 26),
-        ),
-        title: Row(
-          children: [
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            if (isElearning) ...[
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-                child: Text('فيديو', style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.bold)),
-              ),
-            ],
+    return BounceButton(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: isElearning ? Border.all(color: color.withValues(alpha: 0.3), width: 2) : null,
+          boxShadow: [
+            BoxShadow(color: color.withValues(alpha: 0.10), blurRadius: 12, offset: const Offset(0, 4)),
           ],
         ),
-        subtitle: Text(subtitle, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
-        trailing: Icon(Icons.chevron_left_rounded, color: AppTheme.textLight),
-        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          child: Row(
+            children: [
+              // أيقونة إيموجي
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [color, color.withValues(alpha: 0.7)]),
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 3))],
+                ),
+                child: Center(
+                  child: Text(emoji, style: const TextStyle(fontSize: 28)),
+                ),
+              ),
+              const SizedBox(width: 14),
+              // العنوان والوصف
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+                        if (isElearning) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                            decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(12)),
+                            child: Text('فيديو', style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.bold)),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(subtitle, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_left_rounded, color: AppTheme.textLight, size: 28),
+            ],
+          ),
+        ),
       ),
     );
   }

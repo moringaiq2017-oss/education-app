@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../../config/theme.dart';
 import '../../data/songs_data.dart';
+import '../../widgets/fun_widgets.dart';
 
 class SongsScreen extends StatelessWidget {
   const SongsScreen({super.key});
@@ -31,9 +32,9 @@ class SongsScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                const Icon(Icons.music_note_rounded, size: 56, color: Colors.white),
+                const AnimatedEmoji(emoji: '🎵', size: 52),
                 const SizedBox(height: 12),
-                const Text('أناشيد القراءة',
+                const Text('يلّا نغني! 🎶',
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
                 const SizedBox(height: 6),
                 Text('${SongsData.songs.length} أناشيد من كتاب القراءة للصف الأول',

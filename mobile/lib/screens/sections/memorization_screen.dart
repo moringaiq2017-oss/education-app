@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../config/theme.dart';
 import '../../data/memorization_data.dart';
 import '../../services/tts_service.dart';
+import '../../widgets/fun_widgets.dart';
 
 // ============================================
 // لون قسم المحفوظات
@@ -62,11 +63,10 @@ class _MemorizationScreenState extends State<MemorizationScreen> {
             ),
             child: Column(
               children: [
-                const Icon(Icons.auto_stories_rounded,
-                    size: 56, color: Colors.white),
+                const AnimatedEmoji(emoji: '📝', size: 52),
                 const SizedBox(height: 12),
                 const Text(
-                  'احفظ وردّد',
+                  'يلّا نحفظ! 🌟',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
