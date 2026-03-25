@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../config/theme.dart';
 import '../sections/dictation_screen.dart';
+import '../sections/memorization_screen.dart';
 import '../sections/songs_screen.dart';
 import 'elearning_screen.dart';
 
@@ -31,10 +32,10 @@ class ReadingScreen extends StatelessWidget {
         ),
         _SectionTile(
           icon: Icons.bookmark_rounded,
-          title: 'الحفظ',
-          subtitle: 'حفظ النصوص والقطع',
+          title: 'المحفوظات',
+          subtitle: 'حفظ النصوص بـ 3 مراحل تفاعلية',
           color: const Color(0xFF00B894),
-          onTap: () {},
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MemorizationScreen())),
         ),
         _SectionTile(
           icon: Icons.abc_rounded,
