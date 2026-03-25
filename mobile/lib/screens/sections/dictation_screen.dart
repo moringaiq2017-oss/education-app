@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../config/theme.dart';
 import '../../data/dictation_data.dart';
 import '../../services/tts_service.dart';
+import '../../widgets/fun_widgets.dart';
 
 class DictationScreen extends StatelessWidget {
   const DictationScreen({super.key});
@@ -164,6 +165,7 @@ class _DictationPracticeScreenState extends State<DictationPracticeScreen> {
   bool _showWord = false;
   bool _isFinished = false;
   final TtsService _tts = TtsService();
+  final GlobalKey<ConfettiOverlayState> _confettiKey = GlobalKey();
 
   String get _currentWord => widget.lesson.words[_currentWordIndex];
 
@@ -192,7 +194,11 @@ class _DictationPracticeScreenState extends State<DictationPracticeScreen> {
       final cleanAnswer = _removeHarakat(answer);
       final cleanWord = _removeHarakat(_currentWord);
       _isCorrect = cleanAnswer == cleanWord;
-      if (_isCorrect!) _correctCount++;
+      if (_isCorrect!) {
+        _correctCount++;
+        // 🎉 كونفيتي!
+        _confettiKey.currentState?.fire();
+      }
     });
   }
 
@@ -253,7 +259,9 @@ class _DictationPracticeScreenState extends State<DictationPracticeScreen> {
         elevation: 0,
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
+      body: ConfettiOverlay(
+        key: _confettiKey,
+        child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
@@ -436,18 +444,13 @@ class _DictationPracticeScreenState extends State<DictationPracticeScreen> {
                 ),
                 child: Column(
                   children: [
-                    Icon(
-                      _isCorrect!
-                          ? Icons.check_circle_rounded
-                          : Icons.cancel_rounded,
-                      color: _isCorrect!
-                          ? AppTheme.successColor
-                          : AppTheme.alarmColor,
-                      size: 40,
+                    Text(
+                      _isCorrect! ? '🎉' : '😅',
+                      style: const TextStyle(fontSize: 48),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _isCorrect! ? 'أحسنت! 🎉' : 'حاول مرة ثانية',
+                      _isCorrect! ? 'أحسنت يا بطل! ⭐' : 'حاول مرة ثانية 💪',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -519,6 +522,7 @@ class _DictationPracticeScreenState extends State<DictationPracticeScreen> {
           ],
         ),
       ),
+      ),
     );
   }
 
@@ -537,28 +541,25 @@ class _DictationPracticeScreenState extends State<DictationPracticeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // أيقونة النتيجة
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: isGreat
-                        ? AppTheme.successColor.withValues(alpha: 0.1)
-                        : AppTheme.warningColor.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    isGreat
-                        ? Icons.emoji_events_rounded
-                        : Icons.refresh_rounded,
-                    size: 64,
-                    color: isGreat
-                        ? AppTheme.successColor
-                        : AppTheme.warningColor,
-                  ),
+                AnimatedEmoji(
+                  emoji: isGreat ? '🏆' : '💪',
+                  size: 72,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
+                if (isGreat)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(3, (i) => TweenAnimationBuilder<double>(
+                      tween: Tween(begin: 0.0, end: 1.0),
+                      duration: Duration(milliseconds: 500 + (i * 200)),
+                      curve: Curves.elasticOut,
+                      builder: (_, v, child) => Transform.scale(scale: v, child: child),
+                      child: const Padding(padding: EdgeInsets.symmetric(horizontal: 4), child: Text('⭐', style: TextStyle(fontSize: 36))),
+                    )),
+                  ),
+                const SizedBox(height: 16),
                 Text(
-                  isGreat ? 'ممتاز! 🎉' : 'حاول مرة ثانية',
+                  isGreat ? 'ممتاز يا بطل! 🎉' : 'يلا نحاول مرة ثانية! 💪',
                   style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
