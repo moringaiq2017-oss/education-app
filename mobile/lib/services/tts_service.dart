@@ -28,10 +28,12 @@ class TtsService {
           'input': {'text': text},
           'voice': {
             'languageCode': 'ar-XA',
-            'name': 'ar-XA-Standard-A',
+            'name': 'ar-XA-Neural2-A', // صوت أنثوي طبيعي
           },
           'audioConfig': {
             'audioEncoding': 'MP3',
+            'speakingRate': 0.85, // أبطأ شوية للأطفال
+            'pitch': 2.0, // صوت أعلى - أقرب لصوت أم
           },
         },
         options: Options(
