@@ -132,7 +132,7 @@ class _IslamicScreenState extends State<IslamicScreen> {
   Widget _buildElearningCard(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(
-        builder: (_) => const ElearningScreen(subjectName: 'الإسلامية', subjectColor: _primaryColor),
+        builder: (_) => const ElearningScreen(subject: 'الإسلامية'),
       )),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
