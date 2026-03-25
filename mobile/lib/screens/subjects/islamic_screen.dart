@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 import '../../config/theme.dart';
 import '../../data/islamic_data.dart';
 import '../../services/tts_service.dart';
@@ -317,10 +318,31 @@ class _LessonDetailScreen extends StatelessWidget {
 // كارد القسم
 // ==========================================
 
-class _SectionCard extends StatelessWidget {
+class _SectionCard extends StatefulWidget {
   final LessonSection section;
   final Color color;
   const _SectionCard({required this.section, required this.color});
+
+  @override
+  State<_SectionCard> createState() => _SectionCardState();
+}
+
+class _SectionCardState extends State<_SectionCard> {
+  final TtsService _tts = TtsService();
+  bool _isSpeaking = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tts.onPlayerStateChanged.listen((state) {
+      if (mounted) {
+        setState(() => _isSpeaking = state == PlayerState.playing);
+      }
+    });
+  }
+
+  LessonSection get section => widget.section;
+  Color get color => widget.color;
 
   IconData get _icon {
     switch (section.type) {
@@ -360,11 +382,24 @@ class _SectionCard extends StatelessWidget {
                 Expanded(child: Text(section.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: color))),
                 if (section.type == 'quran' || section.type == 'memorize')
                   GestureDetector(
-                    onTap: () => TtsService().speak(section.content),
+                    onTap: () {
+                      if (_isSpeaking) {
+                        _tts.stop();
+                      } else {
+                        _tts.speak(section.content);
+                      }
+                    },
                     child: Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(color: color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(10)),
-                      child: Icon(Icons.volume_up_rounded, color: color, size: 18),
+                      decoration: BoxDecoration(
+                        color: _isSpeaking ? Colors.red.withValues(alpha: 0.15) : color.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        _isSpeaking ? Icons.stop_rounded : Icons.volume_up_rounded,
+                        color: _isSpeaking ? Colors.red : color,
+                        size: 18,
+                      ),
                     ),
                   ),
               ],

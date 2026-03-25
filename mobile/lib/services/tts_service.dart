@@ -18,6 +18,12 @@ class TtsService {
 
   final Dio _dio = Dio();
   final AudioPlayer _audioPlayer = AudioPlayer();
+  bool _isPlaying = false;
+
+  bool get isPlaying => _isPlaying;
+
+  /// الاستماع لتغيير حالة التشغيل
+  Stream<PlayerState> get onPlayerStateChanged => _audioPlayer.onPlayerStateChanged;
 
   /// نطق النص بصوت عربي
   Future<void> speak(String text) async {
@@ -49,10 +55,12 @@ class TtsService {
       await tempFile.writeAsBytes(audioBytes);
 
       await _audioPlayer.stop();
+      _isPlaying = true;
       await _audioPlayer.play(DeviceFileSource(tempFile.path));
 
       // حذف الملف بعد التشغيل
       _audioPlayer.onPlayerComplete.listen((_) {
+        _isPlaying = false;
         tempFile.delete().catchError((_) => tempFile);
       });
     } catch (e) {
@@ -64,6 +72,7 @@ class TtsService {
   Future<void> stop() async {
     try {
       await _audioPlayer.stop();
+      _isPlaying = false;
     } catch (_) {}
   }
 
