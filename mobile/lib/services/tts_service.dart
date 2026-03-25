@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -41,10 +42,19 @@ class TtsService {
       final String audioContent = response.data['audioContent'];
       final Uint8List audioBytes = base64Decode(audioContent);
 
+      // حفظ الملف بامتداد .mp3 حتى يتعرف عليه المشغل
+      final tempDir = Directory.systemTemp;
+      final tempFile = File('${tempDir.path}/tts_${DateTime.now().millisecondsSinceEpoch}.mp3');
+      await tempFile.writeAsBytes(audioBytes);
+
       await _audioPlayer.stop();
-      await _audioPlayer.play(BytesSource(audioBytes));
+      await _audioPlayer.play(DeviceFileSource(tempFile.path));
+
+      // حذف الملف بعد التشغيل
+      _audioPlayer.onPlayerComplete.listen((_) {
+        tempFile.delete().catchError((_) => tempFile);
+      });
     } catch (e) {
-      // لا نعرض خطأ - فقط نتجاهل بصمت حتى لا يتوقف التطبيق
       debugPrintTts('TTS error: $e');
     }
   }
