@@ -31,6 +31,9 @@ dependencies:
     sdk: flutter
   intl: ^0.20.2
   
+  # Audio
+  audioplayers: ^6.1.0
+
   # UI
   cupertino_icons: ^1.0.6
 

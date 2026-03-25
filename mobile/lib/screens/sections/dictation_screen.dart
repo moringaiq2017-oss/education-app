@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../config/theme.dart';
 import '../../data/dictation_data.dart';
+import '../../services/tts_service.dart';
 
 class DictationScreen extends StatelessWidget {
   const DictationScreen({super.key});
@@ -162,11 +163,22 @@ class _DictationPracticeScreenState extends State<DictationPracticeScreen> {
   int _correctCount = 0;
   bool _showWord = false;
   bool _isFinished = false;
+  final TtsService _tts = TtsService();
 
   String get _currentWord => widget.lesson.words[_currentWordIndex];
 
   @override
+  void initState() {
+    super.initState();
+    // نطق الكلمة الأولى تلقائياً عند فتح الشاشة
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _tts.speak(_currentWord);
+    });
+  }
+
+  @override
   void dispose() {
+    _tts.stop();
     _controller.dispose();
     super.dispose();
   }
@@ -203,6 +215,8 @@ class _DictationPracticeScreenState extends State<DictationPracticeScreen> {
         _isCorrect = null;
         _showWord = false;
       });
+      // نطق الكلمة الجديدة تلقائياً
+      _tts.speak(_currentWord);
     } else {
       setState(() => _isFinished = true);
     }
@@ -340,10 +354,16 @@ class _DictationPracticeScreenState extends State<DictationPracticeScreen> {
                       ],
                     ),
                   const SizedBox(height: 16),
-                  // زر السماع / إظهار الكلمة
+                  // أزرار السماع وإظهار الكلمة
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      _ActionButton(
+                        icon: Icons.volume_up_rounded,
+                        label: 'اسمع الكلمة',
+                        onTap: () => _tts.speak(_currentWord),
+                      ),
+                      const SizedBox(width: 12),
                       _ActionButton(
                         icon: Icons.visibility_rounded,
                         label: 'أظهر الكلمة',

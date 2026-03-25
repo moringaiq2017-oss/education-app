@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../config/theme.dart';
 import '../../data/memorization_data.dart';
+import '../../services/tts_service.dart';
 
 // ============================================
 // لون قسم المحفوظات
@@ -560,12 +561,14 @@ class _ListenFollowScreenState extends State<_ListenFollowScreen> {
   Timer? _timer;
   bool _isPlaying = false;
   bool _isFinished = false;
+  final TtsService _tts = TtsService();
 
   List<String> get _words => widget.lesson.words;
 
   @override
   void dispose() {
     _timer?.cancel();
+    _tts.stop();
     super.dispose();
   }
 
@@ -576,9 +579,13 @@ class _ListenFollowScreenState extends State<_ListenFollowScreen> {
       _isPlaying = true;
       _isFinished = false;
     });
+    // نطق الكلمة الأولى
+    _tts.speak(_words[0]);
     _timer = Timer.periodic(const Duration(milliseconds: 1500), (timer) {
       if (_currentWordIndex < _words.length - 1) {
         setState(() => _currentWordIndex++);
+        // نطق الكلمة المُظللة الحالية
+        _tts.speak(_words[_currentWordIndex]);
       } else {
         timer.cancel();
         setState(() {
@@ -590,8 +597,15 @@ class _ListenFollowScreenState extends State<_ListenFollowScreen> {
     });
   }
 
+  /// نطق النص بالكامل
+  void _speakAll() {
+    final fullText = _words.join(' ');
+    _tts.speak(fullText);
+  }
+
   void _replay() {
     _timer?.cancel();
+    _tts.stop();
     setState(() {
       _currentWordIndex = -1;
       _isPlaying = false;
@@ -798,28 +812,53 @@ class _ListenFollowScreenState extends State<_ListenFollowScreen> {
                   ],
                 )
               else if (!_isPlaying)
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton.icon(
-                    onPressed: _startPlayback,
-                    icon: const Icon(Icons.play_arrow_rounded, size: 28),
-                    label: const Text(
-                      'ابدأ الاستماع',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryColor,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton.icon(
+                        onPressed: _startPlayback,
+                        icon: const Icon(Icons.play_arrow_rounded, size: 28),
+                        label: const Text(
+                          'ابدأ الاستماع',
+                          style:
+                              TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.primaryColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 4,
+                          shadowColor:
+                              AppTheme.primaryColor.withValues(alpha: 0.4),
+                        ),
                       ),
-                      elevation: 4,
-                      shadowColor:
-                          AppTheme.primaryColor.withValues(alpha: 0.4),
                     ),
-                  ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: OutlinedButton.icon(
+                        onPressed: _speakAll,
+                        icon: const Icon(Icons.volume_up_rounded, size: 24),
+                        label: const Text(
+                          'اسمع الكل',
+                          style:
+                              TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: AppTheme.primaryColor),
+                          foregroundColor: AppTheme.primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
             ],
           ),
