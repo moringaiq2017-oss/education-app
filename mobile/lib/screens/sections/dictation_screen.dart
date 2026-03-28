@@ -38,7 +38,7 @@ class DictationScreen extends StatelessWidget {
         color: AppTheme.dictationColor,
         child: Column(
           children: [
-            // هيدر
+            // هيدر مع Lottie
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 28),
@@ -51,8 +51,8 @@ class DictationScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  const AnimatedEmoji(emoji: '✏️📝', size: 48),
-                  const SizedBox(height: 12),
+                  const LottieWriting(size: 100),
+                  const SizedBox(height: 8),
                   const Text(
                     'اختاري الدرس',
                     style: TextStyle(
@@ -644,31 +644,13 @@ class _DictationPracticeScreenState extends State<DictationPracticeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // أيقونة النتيجة
-                  AnimatedEmoji(
-                    emoji: isGreat ? '🏆' : '💪',
-                    size: 80,
-                  ),
-                  const SizedBox(height: 16),
+                  // أنيميشن النتيجة - Lottie
                   if (isGreat)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                          3,
-                          (i) => TweenAnimationBuilder<double>(
-                                tween: Tween(begin: 0.0, end: 1.0),
-                                duration:
-                                    Duration(milliseconds: 500 + (i * 200)),
-                                curve: Curves.elasticOut,
-                                builder: (_, v, child) =>
-                                    Transform.scale(scale: v, child: child),
-                                child: const Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 4),
-                                    child: Text('⭐',
-                                        style: TextStyle(fontSize: 40))),
-                              )),
-                    ),
+                    const LottieCelebration(trigger: true, size: 180)
+                  else
+                    const AnimatedEmoji(emoji: '💪', size: 80),
+                  const SizedBox(height: 8),
+                  if (isGreat) const LottieStars(size: 100),
                   const SizedBox(height: 16),
                   Text(
                     resultMessage,

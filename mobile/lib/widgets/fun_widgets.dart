@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 // ==========================================
 // 🎉 كونفيتي - يظهر عند الإجابة الصحيحة
@@ -476,6 +477,223 @@ class _AnimatedEmojiState extends State<AnimatedEmoji> with SingleTickerProvider
           child: Text(widget.emoji, style: TextStyle(fontSize: widget.size)),
         );
       },
+    );
+  }
+}
+
+// ==========================================
+// 🏆 شريط التقدم المتحرك
+// ==========================================
+
+// ==========================================
+// 🎬 Lottie Animation Widgets
+// ==========================================
+
+/// أنيميشن Lottie للاحتفال - يظهر عند النجاح
+class LottieCelebration extends StatefulWidget {
+  final bool trigger;
+  final double size;
+  const LottieCelebration({super.key, this.trigger = false, this.size = 200});
+
+  @override
+  State<LottieCelebration> createState() => LottieCelebrationState();
+}
+
+class LottieCelebrationState extends State<LottieCelebration> with TickerProviderStateMixin {
+  late AnimationController _controller;
+  bool _show = false;
+
+  void fire() {
+    setState(() => _show = true);
+    _controller.reset();
+    _controller.forward().then((_) {
+      if (mounted) setState(() => _show = false);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 2));
+  }
+
+  @override
+  void didUpdateWidget(LottieCelebration oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.trigger && !oldWidget.trigger) fire();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_show) return const SizedBox.shrink();
+    return IgnorePointer(
+      child: Center(
+        child: Lottie.asset(
+          'assets/animations/celebration.json',
+          controller: _controller,
+          width: widget.size,
+          height: widget.size,
+        ),
+      ),
+    );
+  }
+}
+
+/// أنيميشن Lottie للنجوم
+class LottieStars extends StatelessWidget {
+  final double size;
+  const LottieStars({super.key, this.size = 150});
+
+  @override
+  Widget build(BuildContext context) {
+    return Lottie.asset(
+      'assets/animations/stars.json',
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+  }
+}
+
+/// أنيميشن Lottie للقراءة - ولد يقرأ
+class LottieReading extends StatelessWidget {
+  final double size;
+  const LottieReading({super.key, this.size = 200});
+
+  @override
+  Widget build(BuildContext context) {
+    return Lottie.asset(
+      'assets/animations/reading.json',
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+  }
+}
+
+/// أنيميشن Lottie للكتابة
+class LottieWriting extends StatelessWidget {
+  final double size;
+  const LottieWriting({super.key, this.size = 200});
+
+  @override
+  Widget build(BuildContext context) {
+    return Lottie.asset(
+      'assets/animations/writing.json',
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+  }
+}
+
+/// أنيميشن Lottie للدراسة - ولد يدرس
+class LottieStudying extends StatelessWidget {
+  final double size;
+  const LottieStudying({super.key, this.size = 200});
+
+  @override
+  Widget build(BuildContext context) {
+    return Lottie.asset(
+      'assets/animations/boy_studying.json',
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+  }
+}
+
+/// أنيميشن Lottie للكأس - عند الفوز
+class LottieTrophy extends StatelessWidget {
+  final double size;
+  const LottieTrophy({super.key, this.size = 200});
+
+  @override
+  Widget build(BuildContext context) {
+    return Lottie.asset(
+      'assets/animations/trophy.json',
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+  }
+}
+
+/// أنيميشن Lottie للإجابة الصحيحة ✓
+class LottieCorrect extends StatefulWidget {
+  final bool trigger;
+  final double size;
+  const LottieCorrect({super.key, this.trigger = false, this.size = 120});
+
+  @override
+  State<LottieCorrect> createState() => LottieCorrectState();
+}
+
+class LottieCorrectState extends State<LottieCorrect> with TickerProviderStateMixin {
+  late AnimationController _controller;
+  bool _show = false;
+
+  void fire() {
+    setState(() => _show = true);
+    _controller.reset();
+    _controller.forward().then((_) {
+      if (mounted) setState(() => _show = false);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500));
+  }
+
+  @override
+  void didUpdateWidget(LottieCorrect oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.trigger && !oldWidget.trigger) fire();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_show) return const SizedBox.shrink();
+    return IgnorePointer(
+      child: Center(
+        child: Lottie.asset(
+          'assets/animations/correct.json',
+          controller: _controller,
+          width: widget.size,
+          height: widget.size,
+        ),
+      ),
+    );
+  }
+}
+
+/// أنيميشن تحميل
+class LottieLoading extends StatelessWidget {
+  final double size;
+  const LottieLoading({super.key, this.size = 100});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Lottie.asset(
+        'assets/animations/loading.json',
+        width: size,
+        height: size,
+      ),
     );
   }
 }

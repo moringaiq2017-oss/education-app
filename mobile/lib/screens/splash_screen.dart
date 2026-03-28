@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../config/theme.dart';
+import '../widgets/fun_widgets.dart';
 import 'home_screen.dart';
 import 'package:flutter/services.dart';
 
@@ -83,26 +84,8 @@ class _SplashScreenState extends State<SplashScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(28),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
-                          blurRadius: 30,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.school_rounded,
-                      size: 72,
-                      color: AppTheme.primaryColor,
-                    ),
-                  ),
-                  const SizedBox(height: 28),
+                  const LottieStudying(size: 180),
+                  const SizedBox(height: 16),
                   const Text(
                     'مساعد أمي',
                     style: TextStyle(
@@ -120,15 +103,8 @@ class _SplashScreenState extends State<SplashScreen>
                       color: Colors.white.withValues(alpha: 0.85),
                     ),
                   ),
-                  const SizedBox(height: 50),
-                  const SizedBox(
-                    width: 32,
-                    height: 32,
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      strokeWidth: 3,
-                    ),
-                  ),
+                  const SizedBox(height: 30),
+                  const LottieLoading(size: 60),
                 ],
               ),
             ),

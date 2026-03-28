@@ -167,16 +167,13 @@ class HomeTab extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            // صورة الطفل
-                            Container(
-                              width: 56, height: 56,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white.withValues(alpha: 0.8), width: 3),
-                                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10)],
+                            // أنيميشن الطفل
+                            SizedBox(
+                              width: 70, height: 70,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(35),
+                                child: const LottieStudying(size: 70),
                               ),
-                              child: const Center(child: Text('😊', style: TextStyle(fontSize: 30))),
                             ),
                             const SizedBox(width: 14),
                             Expanded(
@@ -236,23 +233,30 @@ class HomeTab extends StatelessWidget {
               ),
             ),
 
-            // ======== رسالة تشجيعية ========
+            // ======== رسالة تشجيعية مع Lottie ========
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
-                child: Row(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+                child: Column(
                   children: [
-                    const AnimatedEmoji(emoji: '📖', size: 28),
-                    const SizedBox(width: 10),
-                    const Text('موادي الدراسية', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF2D3436))),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF6C63FF).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text('${_subjects.length} مواد', style: const TextStyle(color: Color(0xFF6C63FF), fontSize: 12, fontWeight: FontWeight.bold)),
+                    // أنيميشن القراءة
+                    const LottieReading(size: 120),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const AnimatedEmoji(emoji: '📖', size: 28),
+                        const SizedBox(width: 10),
+                        const Text('موادي الدراسية', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF2D3436))),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF6C63FF).withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text('${_subjects.length} مواد', style: const TextStyle(color: Color(0xFF6C63FF), fontSize: 12, fontWeight: FontWeight.bold)),
+                        ),
+                      ],
                     ),
                   ],
                 ),
