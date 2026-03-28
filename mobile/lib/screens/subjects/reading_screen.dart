@@ -51,7 +51,7 @@ class ReadingScreen extends StatelessWidget {
   Widget _buildHeader() {
     return SliverToBoxAdapter(
       child: Container(
-        padding: const EdgeInsets.only(top: 20, bottom: 36, left: 20, right: 20),
+        padding: const EdgeInsets.only(top: 16, bottom: 32, left: 20, right: 20),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFF9C27B0), Color(0xFFE91E63)],
@@ -60,51 +60,55 @@ class ReadingScreen extends StatelessWidget {
           ),
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(40)),
           boxShadow: [
-            BoxShadow(
-              color: Color(0x40E91E63),
-              offset: Offset(0, 8),
-              blurRadius: 16,
-            ),
+            BoxShadow(color: Color(0x40E91E63), offset: Offset(0, 8), blurRadius: 16),
           ],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
           children: [
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            // زر الرجوع + العنوان
+            Row(
               children: [
-                Text(
+                Builder(
+                  builder: (ctx) => GestureDetector(
+                    onTap: () => Navigator.pop(ctx),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
                   'كتاب قراءتي 📖',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'الصف الأول الابتدائي',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  '٣٣ موضوع من الكتاب',
-                  style: TextStyle(
-                    color: Colors.white60,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900),
                 ),
               ],
             ),
-            // أنيميشن القراءة
-            const SizedBox(
-              width: 80,
-              height: 80,
-              child: LottieReading(size: 80),
+            const SizedBox(height: 14),
+            // التفاصيل + Lottie
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'الصف الأول الابتدائي',
+                      style: TextStyle(color: Colors.white70, fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      '٣٣ موضوع من الكتاب',
+                      style: TextStyle(color: Colors.white60, fontSize: 13),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 80, height: 80, child: LottieReading(size: 80)),
+              ],
             ),
           ],
         ),
@@ -225,11 +229,28 @@ class _TopicCardState extends State<_TopicCard> with SingleTickerProviderStateMi
                           ),
                           // الصورة أو الإيموجي
                           if (topic.hasImage)
-                            Image.asset(
-                              topic.imagePath!,
-                              height: 80,
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) => _emojiCircle(topic),
+                            Container(
+                              width: 90,
+                              height: 90,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: topic.color.withValues(alpha: 0.15),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.asset(
+                                  topic.imagePath!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => _emojiCircle(topic),
+                                ),
+                              ),
                             )
                           else
                             _emojiCircle(topic),

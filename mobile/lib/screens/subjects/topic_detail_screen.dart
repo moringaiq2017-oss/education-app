@@ -116,10 +116,27 @@ class TopicDetailScreen extends StatelessWidget {
                 ),
                 // الصورة الرئيسية
                 if (topic.hasImage)
-                  Image.asset(
-                    topic.imagePath!,
-                    height: 150,
-                    fit: BoxFit.contain,
+                  Container(
+                    width: 140,
+                    height: 140,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(28),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.15),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(28),
+                      child: Image.asset(
+                        topic.imagePath!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   )
                 else
                   TopicIllustration(
