@@ -73,12 +73,35 @@ class TopicDetailScreen extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 8),
-                // أيقونة الموضوع
-                TopicIllustration(
-                  emoji: topic.illustration,
-                  color: Colors.white.withValues(alpha: 0.25),
-                  size: 80,
-                ),
+                // أيقونة الموضوع أو صورة حقيقية
+                if (topic.hasImage)
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: Image.asset(
+                        topic.imagePath!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  )
+                else
+                  TopicIllustration(
+                    emoji: topic.illustration,
+                    color: Colors.white.withValues(alpha: 0.25),
+                    size: 80,
+                  ),
                 const SizedBox(height: 12),
                 // الحرف
                 if (topic.letter.length <= 2)

@@ -10,6 +10,7 @@ class ReadingTopic {
   final String letter;
   final int pageNumber;
   final String illustration; // إيموجي توضيحي
+  final String? imagePath; // مسار صورة Gemini (اختياري)
   final Color color;
   final List<int> dictationIds;
   final List<int> songIds;
@@ -22,10 +23,14 @@ class ReadingTopic {
     required this.pageNumber,
     required this.illustration,
     required this.color,
+    this.imagePath,
     this.dictationIds = const [],
     this.songIds = const [],
     this.memorizationIds = const [],
   });
+
+  /// هل عنده صورة حقيقية؟
+  bool get hasImage => imagePath != null;
 
   /// عدد الأقسام المتاحة (إملاء + أناشيد + محفوظات + تعليم إلكتروني)
   int get availableSectionsCount {
@@ -59,6 +64,7 @@ class ReadingTopicsData {
       letter: 'د',
       pageNumber: 21,
       illustration: '🏠', // دار
+      imagePath: 'assets/illustrations/dada.png',
       color: Color(0xFF6C63FF),
       dictationIds: [1],
       memorizationIds: [1],
@@ -69,6 +75,7 @@ class ReadingTopicsData {
       letter: 'ب',
       pageNumber: 26,
       illustration: '🚪', // باب
+      imagePath: 'assets/illustrations/bab.png',
       color: Color(0xFF00B894),
       dictationIds: [2],
       memorizationIds: [2],
@@ -79,6 +86,7 @@ class ReadingTopicsData {
       letter: 'ن',
       pageNumber: 27,
       illustration: '💡', // نور
+      imagePath: 'assets/illustrations/noor.png',
       color: Color(0xFF0984E3),
       dictationIds: [3],
     ),
@@ -88,6 +96,7 @@ class ReadingTopicsData {
       letter: 'م',
       pageNumber: 28,
       illustration: '👩', // ماما
+      imagePath: 'assets/illustrations/mama.png',
       color: Color(0xFFE84393),
       dictationIds: [4],
       memorizationIds: [3],
@@ -109,6 +118,7 @@ class ReadingTopicsData {
       letter: 'ق',
       pageNumber: 37,
       illustration: '🐄', // بقر
+      imagePath: 'assets/illustrations/baqar.png',
       color: Color(0xFF00CEC9),
       dictationIds: [6],
       memorizationIds: [6],

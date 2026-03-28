@@ -226,12 +226,23 @@ class _TopicCardState extends State<_TopicCard> with SingleTickerProviderStateMi
                             ),
                           ),
                         ),
-                        // أيقونة الموضوع
-                        TopicIllustration(
-                          emoji: topic.illustration,
-                          color: topic.color,
-                          size: 48,
-                        ),
+                        // أيقونة الموضوع أو صورة حقيقية
+                        if (topic.hasImage)
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(14),
+                            child: Image.asset(
+                              topic.imagePath!,
+                              width: 56,
+                              height: 56,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        else
+                          TopicIllustration(
+                            emoji: topic.illustration,
+                            color: topic.color,
+                            size: 48,
+                          ),
                       ],
                     ),
                     const Spacer(),
