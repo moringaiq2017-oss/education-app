@@ -1,213 +1,179 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../data/reading_topics_data.dart';
 import '../../widgets/fun_widgets.dart';
-import '../../widgets/apple_decoration.dart';
-import '../../widgets/topic_illustration.dart';
 import '../sections/dictation_screen.dart';
 import '../sections/songs_screen.dart';
 import '../sections/memorization_screen.dart';
 import 'elearning_screen.dart';
 
-/// شاشة تفاصيل الموضوع - تصميم طفولي ملون
+/// شاشة تفاصيل الموضوع - تصميم Gemini
 class TopicDetailScreen extends StatelessWidget {
   final ReadingTopic topic;
   const TopicDetailScreen({super.key, required this.topic});
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: const Color(0xFFFFF9F2),
-        body: Stack(
-          children: [
-            // نجوم وزخارف خلفية
-            _buildBackgroundDecorations(),
-
-            Column(
-              children: [
-                // الهيدر المنحني
-                _buildHeader(context),
-
-                // بطاقات الأقسام
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                    physics: const BouncingScrollPhysics(),
-                    children: _buildSections(context),
-                  ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFFFF9F2),
+      body: Stack(
+        children: [
+          const _SubtleDecor(),
+          Column(
+            children: [
+              // الهيدر المنحني
+              _buildHeader(context),
+              const SizedBox(height: 20),
+              // قائمة الأنشطة
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 15, right: 5),
+                      child: Text(
+                        'الأنشطة (${topic.availableSectionsCount})',
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF4A4A4A)),
+                      ),
+                    ),
+                    ..._buildActivityCards(context),
+                    const SizedBox(height: 40),
+                  ],
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildHeader(BuildContext context) {
-    // ألوان التدرج حسب لون الموضوع
-    final baseColor = topic.color;
-    final secondColor = Color.lerp(baseColor, const Color(0xFFFF8B8B), 0.5)!;
-
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [baseColor, secondColor],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+          colors: [topic.color.withValues(alpha: 0.6), topic.color],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        borderRadius: const BorderRadius.vertical(
-          bottom: Radius.circular(45),
-        ),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
+        boxShadow: [
+          BoxShadow(color: topic.color.withValues(alpha: 0.4), blurRadius: 15, offset: const Offset(0, 5)),
+        ],
       ),
       child: SafeArea(
         bottom: false,
-        child: Column(
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            // شريط العنوان: زر الرجوع + العنوان
+            // حرف كبير شفاف بالخلفية
+            if (topic.letter.length <= 2)
+              Positioned(
+                right: -30,
+                top: -10,
+                child: Text(
+                  topic.letter,
+                  style: TextStyle(
+                    fontSize: 180,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white.withValues(alpha: 0.12),
+                    height: 1.0,
+                  ),
+                ),
+              ),
+            // المحتوى
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Column(
                 children: [
-                  // العنوان بالوسط (مع spacer)
-                  const SizedBox(width: 40),
+                  // زر الرجوع + رقم الصفحة
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      BounceButton(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.3),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20),
+                        ),
+                      ),
+                      if (topic.pageNumber > 0)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.3),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'صفحة ${topic.pageNumber}',
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  // صورة الموضوع
+                  _buildIconContainer(),
+                  const SizedBox(height: 15),
+                  // عنوان الموضوع
                   Text(
                     topic.title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
-                  // زر الرجوع
-                  BounceButton(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20),
-                    ),
-                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
-
-            // الصورة التوضيحية + الحرف
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                // تفاحات ديكور
-                Positioned(
-                  top: 0,
-                  right: 20,
-                  child: AppleDecoration(size: 28, color: Colors.red.withValues(alpha: 0.6)),
-                ),
-                const Positioned(
-                  top: 10,
-                  left: 30,
-                  child: AppleDecoration(size: 22, color: Color(0xFF27AE60)),
-                ),
-                // الصورة الرئيسية
-                if (topic.hasImage)
-                  Container(
-                    width: 140,
-                    height: 140,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(28),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(28),
-                      child: Image.asset(
-                        topic.imagePath!,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  )
-                else
-                  TopicIllustration(
-                    emoji: topic.illustration,
-                    color: Colors.white.withValues(alpha: 0.25),
-                    size: 120,
-                  ),
-                // الحرف الكبير
-                if (topic.letter.length <= 2)
-                  Positioned(
-                    right: 30,
-                    bottom: 0,
-                    child: Text(
-                      topic.letter,
-                      style: TextStyle(
-                        fontSize: 72,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white.withValues(alpha: 0.3),
-                        shadows: [
-                          Shadow(
-                            color: Colors.black.withValues(alpha: 0.15),
-                            blurRadius: 8,
-                            offset: const Offset(2, 2),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-
-            const SizedBox(height: 12),
-
-            // رقم الصفحة
-            if (topic.pageNumber > 0)
-              Text(
-                'صفحة ${topic.pageNumber} من كتاب القراءة',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.9),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            const SizedBox(height: 4),
-            Text(
-              '${topic.availableSectionsCount} أقسام متاحة',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
           ],
         ),
       ),
     );
   }
 
-  List<Widget> _buildSections(BuildContext context) {
-    final sections = <Widget>[];
+  Widget _buildIconContainer() {
+    return Container(
+      height: 100,
+      width: 100,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: topic.hasImage
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: Image.asset(topic.imagePath!, fit: BoxFit.cover),
+            )
+          : Center(
+              child: Text(topic.illustration, style: const TextStyle(fontSize: 50)),
+            ),
+    );
+  }
 
-    // === الإملاء ===
+  List<Widget> _buildActivityCards(BuildContext context) {
+    final cards = <Widget>[];
+
+    // الإملاء
     if (topic.dictationIds.isNotEmpty) {
       final lessons = topic.dictationLessons;
       final wordCount = lessons.fold<int>(0, (sum, l) => sum + l.words.length);
-      sections.add(_ActivityCard(
+      cards.add(_ActivityCard(
         title: 'الإملاء',
         subtitle: '$wordCount كلمات للتمرن',
         emoji: '✏️',
-        gradientColors: const [Color(0xFF9867C5), Color(0xFFB185DB)],
+        colors: [Colors.purple.shade300, Colors.purple.shade400],
         onTap: () {
           if (lessons.length == 1) {
             Navigator.push(context, MaterialPageRoute(
@@ -220,17 +186,16 @@ class TopicDetailScreen extends StatelessWidget {
           }
         },
       ));
-      sections.add(const SizedBox(height: 14));
     }
 
-    // === الأناشيد ===
+    // الأناشيد
     if (topic.songIds.isNotEmpty) {
       final songs = topic.songs;
-      sections.add(_ActivityCard(
+      cards.add(_ActivityCard(
         title: 'الأناشيد',
         subtitle: '${songs.length} أنشودة ممتعة',
         emoji: '🎵',
-        gradientColors: const [Color(0xFFF6A623), Color(0xFFFFBF5F)],
+        colors: [Colors.orange.shade300, Colors.orange.shade400],
         onTap: () {
           if (songs.length == 1) {
             Navigator.push(context, MaterialPageRoute(
@@ -243,17 +208,16 @@ class TopicDetailScreen extends StatelessWidget {
           }
         },
       ));
-      sections.add(const SizedBox(height: 14));
     }
 
-    // === المحفوظات ===
+    // المحفوظات
     if (topic.memorizationIds.isNotEmpty) {
       final memLessons = topic.memorizationLessons;
-      sections.add(_ActivityCard(
+      cards.add(_ActivityCard(
         title: 'المحفوظات',
         subtitle: 'استمع واحفظ القصيدة',
         emoji: '📖',
-        gradientColors: const [Color(0xFFFF7E95), Color(0xFFFFA3B5)],
+        colors: [Colors.pink.shade300, Colors.pink.shade400],
         onTap: () {
           if (memLessons.length == 1) {
             Navigator.push(context, MaterialPageRoute(
@@ -266,16 +230,15 @@ class TopicDetailScreen extends StatelessWidget {
           }
         },
       ));
-      sections.add(const SizedBox(height: 14));
     }
 
-    // === التعليم الإلكتروني (دائماً) ===
-    sections.add(_ActivityCard(
+    // التعليم الإلكتروني (دائماً)
+    cards.add(_ActivityCard(
       title: 'التعليم الإلكتروني',
-      subtitle: 'شاهد فيديو الممتع',
+      subtitle: 'شاهد فيديو ممتع',
       emoji: '▶️',
-      gradientColors: const [Color(0xFF45B3A9), Color(0xFF66C7BE)],
-      badgeText: 'فيديو',
+      colors: [Colors.teal.shade300, Colors.teal.shade400],
+      hasBadge: true,
       onTap: () {
         Navigator.push(context, MaterialPageRoute(
           builder: (_) => const ElearningScreen(subject: 'القراءة'),
@@ -283,148 +246,107 @@ class TopicDetailScreen extends StatelessWidget {
       },
     ));
 
-    return sections;
-  }
-
-  Widget _buildBackgroundDecorations() {
-    final random = Random(topic.id);
-    final decorations = <Widget>[];
-    final icons = [Icons.star_rounded, Icons.favorite_rounded, Icons.auto_awesome];
-    final colors = [Colors.amber, Colors.pinkAccent, Colors.purpleAccent, Colors.tealAccent, Colors.orangeAccent];
-
-    for (int i = 0; i < 8; i++) {
-      decorations.add(Positioned(
-        top: 380 + random.nextDouble() * 450,
-        left: random.nextDouble() * 350,
-        child: Icon(
-          icons[random.nextInt(icons.length)],
-          color: colors[random.nextInt(colors.length)].withValues(alpha: 0.15),
-          size: 12 + random.nextDouble() * 16,
-        ),
-      ));
-    }
-    return Stack(children: decorations);
+    return cards;
   }
 }
 
 // ============================================
-// بطاقة النشاط - ملونة وطفولية
+// بطاقة النشاط
 // ============================================
 class _ActivityCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final String emoji;
-  final List<Color> gradientColors;
+  final List<Color> colors;
   final VoidCallback onTap;
-  final String? badgeText;
+  final bool hasBadge;
 
   const _ActivityCard({
     required this.title,
     required this.subtitle,
     required this.emoji,
-    required this.gradientColors,
+    required this.colors,
     required this.onTap,
-    this.badgeText,
+    this.hasBadge = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return BounceButton(
-      onTap: onTap,
-      child: Container(
-        height: 95,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: gradientColors,
-            begin: Alignment.centerRight,
-            end: Alignment.centerLeft,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: BounceButton(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: colors, begin: Alignment.centerRight, end: Alignment.centerLeft),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(color: colors[1].withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4)),
+            ],
           ),
-          borderRadius: BorderRadius.circular(28),
-          boxShadow: [
-            BoxShadow(
-              color: gradientColors.last.withValues(alpha: 0.35),
-              blurRadius: 12,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            // بادج فيديو
-            if (badgeText != null)
-              Positioned(
-                top: 8,
-                left: 8,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.25),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    badgeText!,
-                    style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                // أيقونة
+                Container(
+                  height: 56, width: 56,
+                  decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                  child: Center(child: Text(emoji, style: const TextStyle(fontSize: 28))),
+                ),
+                const SizedBox(width: 16),
+                // النص
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(title, style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Colors.white)),
+                          if (hasBadge) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(color: Colors.redAccent, borderRadius: BorderRadius.circular(8)),
+                              child: const Text('فيديو', style: TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(subtitle, style: TextStyle(fontSize: 13, color: Colors.white.withValues(alpha: 0.9))),
+                    ],
                   ),
                 ),
-              ),
-            // المحتوى
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  // أيقونة
-                  Container(
-                    height: 56,
-                    width: 56,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(emoji, style: const TextStyle(fontSize: 28)),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // النص
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          subtitle,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // سهم
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 16),
-                  ),
-                ],
-              ),
+                // سهم
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle),
+                  child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+// ============================================
+// زخارف خلفية
+// ============================================
+class _SubtleDecor extends StatelessWidget {
+  const _SubtleDecor();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned(top: 400, left: 20, child: Text('✨', style: TextStyle(fontSize: 22, color: Colors.black.withValues(alpha: 0.06)))),
+        Positioned(top: 550, right: 30, child: Text('⭐', style: TextStyle(fontSize: 18, color: Colors.black.withValues(alpha: 0.05)))),
+        Positioned(bottom: 150, left: 40, child: Text('☁️', style: TextStyle(fontSize: 26, color: Colors.black.withValues(alpha: 0.05)))),
+      ],
     );
   }
 }
