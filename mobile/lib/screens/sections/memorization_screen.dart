@@ -16,7 +16,8 @@ const Color _memorizationColor = Color(0xFFE84393);
 // شاشة قائمة دروس المحفوظات
 // ============================================
 class MemorizationScreen extends StatefulWidget {
-  const MemorizationScreen({super.key});
+  final List<int>? lessonIds;
+  const MemorizationScreen({super.key, this.lessonIds});
 
   @override
   State<MemorizationScreen> createState() => _MemorizationScreenState();
@@ -37,7 +38,9 @@ class _MemorizationScreenState extends State<MemorizationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final lessons = MemorizationData.lessons;
+    final lessons = widget.lessonIds != null
+        ? MemorizationData.lessons.where((l) => widget.lessonIds!.contains(l.id)).toList()
+        : MemorizationData.lessons;
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
@@ -212,6 +215,36 @@ class _LessonTile extends StatelessWidget {
         ),
         onTap: onTap,
       ),
+    );
+  }
+}
+
+// ============================================
+// نقطة دخول عامة لدرس محفوظات واحد
+// ============================================
+class MemorizationLessonScreen extends StatefulWidget {
+  final MemorizationLesson lesson;
+  const MemorizationLessonScreen({super.key, required this.lesson});
+
+  @override
+  State<MemorizationLessonScreen> createState() => _MemorizationLessonScreenState();
+}
+
+class _MemorizationLessonScreenState extends State<MemorizationLessonScreen> {
+  int _stars = 0;
+
+  void _updateStars(int stars) {
+    setState(() {
+      if (stars > _stars) _stars = stars;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _LessonStagesScreen(
+      lesson: widget.lesson,
+      currentStars: _stars,
+      onStarsUpdate: _updateStars,
     );
   }
 }

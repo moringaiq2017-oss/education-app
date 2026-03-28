@@ -5,7 +5,12 @@ import '../../data/songs_data.dart';
 import '../../widgets/fun_widgets.dart';
 
 class SongsScreen extends StatelessWidget {
-  const SongsScreen({super.key});
+  final List<int>? songIds;
+  const SongsScreen({super.key, this.songIds});
+
+  List<Song> get _filteredSongs => songIds != null
+      ? SongsData.songs.where((s) => songIds!.contains(s.id)).toList()
+      : SongsData.songs;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +42,7 @@ class SongsScreen extends StatelessWidget {
                 const Text('يلّا نغني! 🎶',
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
                 const SizedBox(height: 6),
-                Text('${SongsData.songs.length} أناشيد من كتاب القراءة للصف الأول',
+                Text('${_filteredSongs.length} أناشيد من كتاب القراءة للصف الأول',
                     style: TextStyle(fontSize: 14, color: Colors.white.withValues(alpha: 0.8))),
               ],
             ),
@@ -45,8 +50,8 @@ class SongsScreen extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(20),
-              itemCount: SongsData.songs.length,
-              itemBuilder: (context, index) => _SongListItem(song: SongsData.songs[index], index: index),
+              itemCount: _filteredSongs.length,
+              itemBuilder: (context, index) => _SongListItem(song: _filteredSongs[index], index: index),
             ),
           ),
         ],

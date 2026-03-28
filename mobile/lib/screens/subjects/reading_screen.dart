@@ -1,124 +1,98 @@
 import 'package:flutter/material.dart';
 import '../../config/theme.dart';
+import '../../data/reading_topics_data.dart';
 import '../../widgets/fun_widgets.dart';
-import '../sections/dictation_screen.dart';
-import '../sections/memorization_screen.dart';
-import '../sections/songs_screen.dart';
-import 'elearning_screen.dart';
+import '../../widgets/apple_decoration.dart';
+import '../../widgets/topic_illustration.dart';
+import 'topic_detail_screen.dart';
 
 class ReadingScreen extends StatelessWidget {
   const ReadingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return _SubjectLayout(
-      title: 'القراءة',
-      color: AppTheme.dictationColor,
-      emoji: '📖',
-      subtitle: 'هيا نقرأ سوا يا بطل!',
-      sections: [
-        _SectionTile(
-          emoji: '✏️',
-          title: 'الإملاء',
-          subtitle: 'اسمع واكتب يا شاطر!',
-          color: AppTheme.dictationColor,
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DictationScreen())),
-        ),
-        _SectionTile(
-          emoji: '🎵',
-          title: 'الأناشيد',
-          subtitle: 'غنّي وتعلّم معنا!',
-          color: AppTheme.songsColor,
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SongsScreen())),
-        ),
-        _SectionTile(
-          emoji: '📝',
-          title: 'المحفوظات',
-          subtitle: 'احفظ وردّد يا نجم!',
-          color: const Color(0xFF00B894),
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MemorizationScreen())),
-        ),
-        _SectionTile(
-          emoji: '🔤',
-          title: 'الحروف',
-          subtitle: 'تعال نتعلم الحروف!',
-          color: const Color(0xFFFDAA5E),
-          onTap: () {},
-        ),
-        _SectionTile(
-          emoji: '💻',
-          title: 'التعليم الإلكتروني',
-          subtitle: 'شاهد دروس فيديو ممتعة!',
-          color: const Color(0xFF0984E3),
-          isElearning: true,
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ElearningScreen(subject: 'القراءة'))),
-        ),
-      ],
-    );
-  }
-}
+    const topics = ReadingTopicsData.topics;
 
-// ============================================
-// Layout مشترك لكل المواد الدراسية - ستايل أطفال
-// ============================================
-class _SubjectLayout extends StatelessWidget {
-  final String title;
-  final Color color;
-  final String emoji;
-  final String subtitle;
-  final List<_SectionTile> sections;
-
-  const _SubjectLayout({
-    required this.title,
-    required this.color,
-    required this.emoji,
-    required this.subtitle,
-    required this.sections,
-  });
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: Text(title),
-        backgroundColor: color,
+        title: const Text('القراءة'),
+        backgroundColor: AppTheme.dictationColor,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
       ),
       body: AnimatedBubbleBackground(
-        color: color,
+        color: AppTheme.dictationColor,
         child: Column(
           children: [
-            // هيدر
+            // === الهيدر ===
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 28),
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: const BorderRadius.only(
+              decoration: const BoxDecoration(
+                color: AppTheme.dictationColor,
+                borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(32),
                   bottomRight: Radius.circular(32),
                 ),
               ),
-              child: Column(
+              child: Stack(
                 children: [
-                  AnimatedEmoji(emoji: emoji, size: 52),
-                  const SizedBox(height: 10),
-                  Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white.withValues(alpha: 0.95)),
+                  // تفاحات ديكور
+                  const Positioned(
+                    top: 5,
+                    left: 0,
+                    child: AppleDecoration(size: 32, color: Color(0xFFE74C3C)),
+                  ),
+                  const Positioned(
+                    top: 10,
+                    right: 20,
+                    child: AppleDecoration(size: 24, color: Color(0xFF27AE60)),
+                  ),
+                  Center(
+                    child: Column(
+                      children: [
+                        const LottieReading(size: 100),
+                        const SizedBox(height: 8),
+                        Text(
+                          'مواضيع كتاب قراءتي 📖',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white.withValues(alpha: 0.95),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${topics.length} موضوع من الكتاب',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.white.withValues(alpha: 0.8),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-            // الأقسام
+
+            // === شبكة المواضيع ===
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.all(20),
-                itemCount: sections.length,
-                itemBuilder: (context, index) => sections[index],
+              child: GridView.builder(
+                padding: const EdgeInsets.all(16),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 14,
+                  crossAxisSpacing: 14,
+                  childAspectRatio: 0.85,
+                ),
+                itemCount: topics.length,
+                itemBuilder: (context, index) => _TopicCard(
+                  topic: topics[index],
+                  index: index,
+                ),
               ),
             ),
           ],
@@ -128,79 +102,199 @@ class _SubjectLayout extends StatelessWidget {
   }
 }
 
-class _SectionTile extends StatelessWidget {
-  final String emoji;
-  final String title;
-  final String subtitle;
-  final Color color;
-  final VoidCallback onTap;
-  final bool isElearning;
+// ============================================
+// بطاقة الموضوع
+// ============================================
+class _TopicCard extends StatefulWidget {
+  final ReadingTopic topic;
+  final int index;
+  const _TopicCard({required this.topic, required this.index});
 
-  const _SectionTile({
-    required this.emoji,
-    required this.title,
-    required this.subtitle,
-    required this.color,
-    required this.onTap,
-    this.isElearning = false,
-  });
+  @override
+  State<_TopicCard> createState() => _TopicCardState();
+}
+
+class _TopicCardState extends State<_TopicCard> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scale;
+  late Animation<Offset> _slideIn;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 400 + (widget.index * 60)),
+    );
+    _scale = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
+    );
+    _slideIn = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BounceButton(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: isElearning ? Border.all(color: color.withValues(alpha: 0.3), width: 2) : null,
-          boxShadow: [
-            BoxShadow(color: color.withValues(alpha: 0.10), blurRadius: 12, offset: const Offset(0, 4)),
-          ],
+    final topic = widget.topic;
+
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) => SlideTransition(
+        position: _slideIn,
+        child: ScaleTransition(scale: _scale, child: child),
+      ),
+      child: BounceButton(
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => TopicDetailScreen(topic: topic)),
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-          child: Row(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: topic.color.withValues(alpha: 0.15),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Stack(
             children: [
-              // أيقونة إيموجي
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [color, color.withValues(alpha: 0.7)]),
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 3))],
-                ),
-                child: Center(
-                  child: Text(emoji, style: const TextStyle(fontSize: 28)),
+              // دائرة خلفية
+              Positioned(
+                top: -15,
+                left: -15,
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: topic.color.withValues(alpha: 0.08),
+                    shape: BoxShape.circle,
+                  ),
                 ),
               ),
-              const SizedBox(width: 14),
-              // العنوان والوصف
-              Expanded(
+              // تفاحة ديكور صغيرة
+              Positioned(
+                bottom: 8,
+                left: 8,
+                child: AppleDecoration(
+                  size: 18,
+                  color: topic.color.withValues(alpha: 0.6),
+                ),
+              ),
+              // المحتوى
+              Padding(
+                padding: const EdgeInsets.all(14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // رقم الموضوع + أيقونة
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
-                        if (isElearning) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                            decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(12)),
-                            child: Text('فيديو', style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.bold)),
+                        // رقم الموضوع
+                        Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: topic.color.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        ],
+                          child: Center(
+                            child: Text(
+                              '${topic.id}',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: topic.color,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // أيقونة الموضوع
+                        TopicIllustration(
+                          emoji: topic.illustration,
+                          color: topic.color,
+                          size: 48,
+                        ),
                       ],
                     ),
+                    const Spacer(),
+                    // اسم الموضوع
+                    Text(
+                      topic.title,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: topic.color,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     const SizedBox(height: 4),
-                    Text(subtitle, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
+                    // الحرف ورقم الصفحة
+                    Row(
+                      children: [
+                        if (topic.letter.length <= 2)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: topic.color.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              topic.letter,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: topic.color,
+                              ),
+                            ),
+                          ),
+                        const Spacer(),
+                        // عدد الأقسام
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '${topic.availableSectionsCount}',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey.shade600,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (topic.pageNumber > 0) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        'ص ${topic.pageNumber}',
+                        style: TextStyle(fontSize: 10, color: Colors.grey.shade400),
+                      ),
+                    ],
                   ],
                 ),
               ),
-              Icon(Icons.chevron_left_rounded, color: AppTheme.textLight, size: 28),
             ],
           ),
         ),

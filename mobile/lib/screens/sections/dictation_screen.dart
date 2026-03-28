@@ -19,11 +19,14 @@ String _randomEncouragement() {
 }
 
 class DictationScreen extends StatelessWidget {
-  const DictationScreen({super.key});
+  final List<int>? lessonIds;
+  const DictationScreen({super.key, this.lessonIds});
 
   @override
   Widget build(BuildContext context) {
-    final lessons = DictationData.lessons;
+    final lessons = lessonIds != null
+        ? DictationData.lessons.where((l) => lessonIds!.contains(l.id)).toList()
+        : DictationData.lessons;
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
